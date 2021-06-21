@@ -20,8 +20,8 @@ def execute(subdir):
         try:
             os.remove("prog")
         except FileNotFoundError:
-            print(subdir, "::", "prog doesn't exist!")
-            sys.exit(1)
+            if input(f"{subdir}/prog doesn't exist! Continue? ") not in ("y", "Y", "yes", "Yes"):
+                sys.exit(1)
 
         post = subprocess.run("make".split(), capture_output=True)
         if post.returncode:

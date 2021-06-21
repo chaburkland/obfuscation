@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     } c;
 
     const unsigned char *f, *l;
-    u64_t X, i, e, z, A, Q, M = -~9, Y;
+    u64_t binary, binary_size, X, i, e, z, A, Q, M = -~9, Y;
 
     void *p;
     r++;
@@ -50,8 +50,8 @@ int main(int argc, char *argv[])
     for(; argv[r][a]; a++)
         T = T * M + argv[!u][a] - W;
 
-    T >>=argc;
-    X = open(argv[--argc], F);
+    T >>= argc;
+    binary = open(argv[--argc], F);
     u64_t w[o] = {
         _ | d | 32776,
         d | r,
@@ -83,8 +83,8 @@ int main(int argc, char *argv[])
     i = 0;
     u64_t O[o] = {M, 7, 11, 17, 18, 3, 5, 16, b, 21, 24, 4, 15, 23, 19, 13, 12, argc, 20, 14, 22, 9, 6, r};
 
-    Y = H = 12952;
-    p = mmap(/*TODO: FIX THIS */NULL, H, r, r, X, u);
+    Y = H = binary_size = 12952;
+    p = mmap(NULL, binary_size, PROT_READ, 1, binary, 0);
     memset(&c, 0, 200);
 
     z = b & 7;
