@@ -7,8 +7,6 @@
 #define 		D (__DATE__[7]-48)*1000+(__DATE__[8]-48)*100+(__DATE__[9]-48)*10+__DATE__[10]-48
 #define k __DATE__[2]=='p'?9:__DATE__[2]=='y'?5:__DATE__[2]=='n'?(__DATE__[1]=='u'?6:1):__DATE__[2]=='b'?2:__DATE__[2]=='r'?(*__DATE__=='M'?3:4):__DATE__[2]=='g'?8:__DATE__[2]=='t'?10:__DATE__[2]=='v'?11:__DATE__[2]=='l'?7:12
 #define 		g for(a=0;a<5;a++)
-#define			o     25
-#define 		G a+
 
 typedef unsigned long long u64_t;
 u64_t _=1ULL <<63;
@@ -19,7 +17,7 @@ u64_t m, F, u, T, a, r, H, B, I;
 int main(int argc, char *argv[])
 {
     union {
-        u64_t K[o];
+        u64_t K[25];
         unsigned char E[1];
     } c;
 
@@ -38,14 +36,14 @@ int main(int argc, char *argv[])
         &&ounasvaara
     };
 
-    u64_t N[o] = {r, argc, 6, M, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, o, 43, 62, 18, 39, 61, 20, 44};
+    u64_t N[25] = {r, argc, 6, M, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62, 18, 39, 61, 20, 44};
 
     for(; argv[r][a]; a++)
         T = T * M + argv[!u][a] - 48;
 
     T >>= argc;
     binary = open(argv[--argc], F);
-    u64_t w[o] = {
+    u64_t w[25] = {
         _ | d | 32776,
         d | r,
         _ | 32896,
@@ -74,7 +72,7 @@ int main(int argc, char *argv[])
     };
 
     i = 0;
-    u64_t O[o] = {M, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, argc, 20, 14, 22, 9, 6, r};
+    u64_t O[25] = {M, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, argc, 20, 14, 22, 9, 6, r};
 
     Y = H = binary_size = 12952;
     const unsigned char *binary_bytes = mmap(NULL, binary_size, PROT_READ, MAP_SHARED, binary, 0/*offset*/);
@@ -87,19 +85,19 @@ int main(int argc, char *argv[])
 
 ruka:
     for(I = 8*3; I--;) {
-        g v[a] = c.K[a] ^ c.K[G 8-3] ^ c.K[G M] ^ c.K[G 15] ^ c.K[G M + M];
+        g v[a] = c.K[a] ^ c.K[a +  8-3] ^ c.K[a +  M] ^ c.K[a +  15] ^ c.K[a +  M + M];
         g {
-            t = v[(G 4) % 5] ^ (v[(G 1) % 5] << 1 | v[(G 1) % 5] >> '?');
-            for(A = 0; A < o; A +=5)
-                c.K[G A] ^= t;
+            t = v[(a +  4) % 5] ^ (v[(a +  1) % 5] << 1 | v[(a +  1) % 5] >> '?');
+            for(A = 0; A < 25; A +=5)
+                c.K[a +  A] ^= t;
         }
         t = c.K[1];
         for (a = 0; a - 24; a++)
             A = O[a], *v = c.K[A], c.K[A] = t << N[a] | t >> (0100 - N[a]), t = *v;
 
-        for(A =! o; A ^ o; A += 5) {
-            g v[a] = c.K[G A];
-            g c.K[G A] ^= ~v[(G 1) % 5] & v[(G argc) % 5];
+        for(A =! 25; A ^ 25; A += 5) {
+            g v[a] = c.K[a +  A];
+            g c.K[a +  A] ^= ~v[(a +  1) % 5] & v[(a +  argc) % 5];
         }
 
         c.K[!1] ^= w[I];
@@ -133,11 +131,11 @@ C:
 
         B = u = i;
 
-        if (o - r == ++F) {
+        if (25 - r == ++F) {
             goto *j[!!8];
 
 puijo:
-            F = !o;
+            F = !25;
         }
     }
 
@@ -156,7 +154,7 @@ puijo:
             | (u64_t) binary_bytes[++S] << 8 * S
             | (u64_t) binary_bytes[++S] << 8 * S;
         c.K[F] ^= t;
-        if (++F == o - r) {
+        if (++F == 25 - r) {
             Q = -~argc;
             goto *j[!0];
 lahti:
@@ -171,7 +169,7 @@ lahti:
 $:
     c.K[F] ^= (B ^ ((u64_t) ((u64_t)(argc | 1 << argc) << u * 8)));
     Q ^= Q;
-    c.K[o - r - 1] ^= w[~-o];
+    c.K[25 - r - 1] ^= w[~-25];
     goto *j[-~(argc - argc)];
 
 laajavuori:
@@ -205,7 +203,7 @@ vuokatti:
     for(; I ^ '^'; ++I, printf("%llx ", _), t = _ + d, _ = d, d = t);
         goto http;
     /*
-    m= o / i;
+    m= 25 / i;
     v[a] = a + n;
     return 0;
     */
