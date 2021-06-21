@@ -16,22 +16,14 @@ LIBS=
 CC= cc
 MAY_NEED_GCC= gcc
 
-
-OBJ= prog.o
 TARGET= prog
+SRC=prog.c
 
 all: ${TARGET}
 	@${TRUE}
 
-prog: prog.c
+prog: ${SRC}
 	${CC} ${CFLAGS} $< -o $@ ${LIBS}
 
 clean:
-	rm -f ${OBJ}
-
-clobber: clean
 	rm -f ${TARGET}
-	@-if [ -e sandwich ]; then \
-	    rm -f sandwich; \
-	    echo 'ate sandwich'; \
-	fi
