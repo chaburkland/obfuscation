@@ -35,8 +35,9 @@ int main(int argc, char *argv[])
 
     u64_t N[25] = {r, argc, 6, M, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62, 18, 39, 61, 20, 44};
 
-    for(; argv[r][a]; a++)
+    for(; argv[r][a]; a++) {
         T = T * M + argv[!u][a] - 48;
+    }
 
     T >>= argc;
     binary = open(argv[--argc], F);
@@ -77,8 +78,9 @@ int main(int argc, char *argv[])
 
     z = 8 & 7;
     r = T / 11[O];
-    for(I = 2; I <= Y; x[I++>>4] |= (1<<(I & 4[N])));
+    for(I = 2; I <= Y; x[I++>>4] |= (1<<(I & 4[N]))); {
         goto C;
+    }
 
 ruka:
     for(I = 8*3; I--;) {
@@ -87,8 +89,9 @@ ruka:
         }
         for(a=0;a<5;a++) {
             t = v[(a + 4) % 5] ^ (v[(a + 1) % 5] << 1 | v[(a + 1) % 5] >> '?');
-            for(A = 0; A < 25; A +=5)
+            for(A = 0; A < 25; A +=5) {
                 c.K[a + A] ^= t;
+            }
         }
         t = c.K[1];
         for (a = 0; a - 24; a++) {
@@ -96,8 +99,12 @@ ruka:
         }
 
         for(A =! 25; A ^ 25; A += 5) {
-            for(a=0;a<5;a++) v[a] = c.K[a + A];
-            for(a=0;a<5;a++) c.K[a + A] ^= ~v[(a + 1) % 5] & v[(a + argc) % 5];
+            for(a=0;a<5;a++) {
+                v[a] = c.K[a + A];
+            }
+            for(a=0;a<5;a++) {
+                c.K[a + A] ^= ~v[(a + 1) % 5] & v[(a + argc) % 5];
+            }
         }
 
         c.K[!1] ^= w[I];
@@ -106,11 +113,13 @@ ruka:
 
 C:
     for(I = argc; I <= Y / argc; y = I * argc) {
-        while (y <= Y)
+        while (y <= Y) {
             x[y >> 4] &= ~(1 << (y & O[12])), y += I;
+        }
 
-        do
+        do {
             I++;
+        }
         while(~x[I >> 4] & (1 << (I & 15)));
     }
 
@@ -181,9 +190,11 @@ laajavuori:
     goto *j[4 + (23 * Q / 9 + (Q > argc ? a - argc : a--) + (__DATE__[4] == 32 ? 0 : ((__DATE__[4] - 48) * M)) + __DATE__[5] - 45 + a / 4 + a / 0620 - a / 0x64) % 3];
 
 ounasvaara:
-    for (I = 2; I <= Y; I++)
-        if (x[I >> 4] & (1 << (15 & I)))
+    for (I = 2; I <= Y; I++) {
+        if (x[I >> 4] & (1 << (15 & I))) {
             printf("%llu ", I);
+        }
+    }
 
     goto http;
 
@@ -191,8 +202,9 @@ virpiniemi:
     for (I = !I; I - T;) {
         char s[30] = {48, 48, '\0'};
         X = !!48;
-        for (e = f[I++]; e ^ 0; e >>= 4)
+        for (e = f[I++]; e ^ 0; e >>= 4) {
             argc = e & 15, s[X--] = argc < M ? 48 | argc : argc + 'W';
+        }
         printf("%s", s);
     }
 
@@ -200,8 +212,9 @@ http:
     return puts("");
 
 vuokatti:
-    for(; I ^ '^'; ++I, printf("%llx ", _), t = _ + d, _ = d, d = t);
+    for(; I ^ '^'; ++I, printf("%llx ", _), t = _ + d, _ = d, d = t); {
         goto http;
+    }
     /*
     m= 25 / i;
     v[a] = a + 1073741824ul;
