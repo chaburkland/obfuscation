@@ -8,33 +8,33 @@
 #define 		q R[2]==
 #define			R __DATE__
 #define 		n 1073741824ul
-#define 		L (V) l[++S] << b * S
+#define 		L (u64_t) l[++S] << b * S
 #define 		D (R[7]-W)*1000+(R[b]-W)*100+(R[9]-W)*10+R[10]-W
 #define k q'p'?9:q'y'?5:q'n'?(R[1]=='u'?6:1):q'b'?2:q'r'?(*R=='M'?3:4):q'g'?8:q't'?10:q'v'?11:q'l'?7:12
-#define 		Z B |= (V) *l++ << u++ * b;
+#define 		Z B |= (u64_t) *l++ << u++ * b;
 #define 		g for(a=0;a<5;a++)
 #define			o     25
 #define 		G a+
 
-typedef unsigned long long V;
-V _=1ULL <<63;
-V d = 1UL<<037;
+typedef unsigned long long u64_t;
+u64_t _=1ULL <<63;
+u64_t d = 1UL<<037;
 unsigned int x[n/16];
-V m, F, u, T, a, r, H, B, I;
+u64_t m, F, u, T, a, r, H, B, I;
 
 int main(int P, char *U[])
 {
     union {
-        V K[o];
+        u64_t K[o];
         unsigned char E[1];
     } c;
 
     const unsigned char *f, *l;
-    V X, i, e, z, A, Q, M = -~9, Y;
+    u64_t X, i, e, z, A, Q, M = -~9, Y;
 
     void *p;
     r++;
-    V t, y=0, v[5];
+    u64_t t, y=0, v[5];
     const void *j[] = {
         &&laajavuori,
         &&ruka,
@@ -45,14 +45,14 @@ int main(int P, char *U[])
         &&ounasvaara
     };
 
-    V N[o] = {r, P, 6, M, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, b, o, 43, 62, 18, 39, 61, 20, 44};
+    u64_t N[o] = {r, P, 6, M, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, b, o, 43, 62, 18, 39, 61, 20, 44};
 
     for(; U[r][a]; a++)
         T = T * M + U[!u][a] - W;
 
     T >>=P;
     X = open(U[--P], F);
-    V w[o] = {
+    u64_t w[o] = {
         _ | d | 32776,
         d | r,
         _ | 32896,
@@ -81,7 +81,7 @@ int main(int P, char *U[])
     };
 
     i = 0;
-    V O[o] = {M, 7, 11, 17, 18, 3, 5, 16, b, 21, 24, 4, 15, 23, 19, 13, 12, P, 20, 14, 22, 9, 6, r};
+    u64_t O[o] = {M, 7, 11, 17, 18, 3, 5, 16, b, 21, 24, 4, 15, 23, 19, 13, 12, P, 20, 14, 22, 9, 6, r};
 
     Y = H = 12952;
     p = mmap(/*TODO: FIX THIS */NULL, H, r, r, X, u);
@@ -152,7 +152,7 @@ puijo:
 
     for (; i < m; l += b) {
         i++;
-        V S =~ -! W;
+        u64_t S =~ -! W;
         t = /*foob*/ L | L | L | L | L | L | L | L;
         c.K[F] ^= t;
         if (++F == o - r) {
@@ -167,7 +167,7 @@ lahti:
         Z
 
 $:
-    c.K[F] ^= (B ^ ((V) ((V)(P | 1 << P) << u * b)));
+    c.K[F] ^= (B ^ ((u64_t) ((u64_t)(P | 1 << P) << u * b)));
     Q ^= Q;
     c.K[o - r - 1] ^= w[~-o];
     goto *j[-~(P - P)];
