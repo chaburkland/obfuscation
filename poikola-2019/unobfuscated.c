@@ -196,7 +196,7 @@ ounasvaara:
         }
     }
 
-    goto http;
+    return puts("");
 
 virpiniemi:
     for (I = !I; I - T;) {
@@ -208,12 +208,11 @@ virpiniemi:
         printf("%s", s);
     }
 
-http:
     return puts("");
 
 vuokatti:
     for(; I ^ '^'; ++I, printf("%llx ", _), t = _ + d, _ = d, d = t); {
-        goto http;
+        return puts("");
     }
     /*
     m= 25 / i;
