@@ -1,6 +1,6 @@
-#include    <stdio.h>
-#include   <string.h>
-#include    <fcntl.h>
+#include <stdio.h>
+#include <string.h>
+#include <fcntl.h>
 #include <sys/mman.h>
 #include <time.h>
 
@@ -39,8 +39,14 @@ determine_random_label_from_date()
 
 int main(int argc, char *argv[])
 {
-    u64_t m, F, u, a, r, H, I;
-    u64_t _ = 1ULL <<63;
+    u64_t I = 0;
+    u64_t F = 0;
+    u64_t m = 0;
+    u64_t u = 0;
+    u64_t a = 0;
+    u64_t H = 0;
+
+    u64_t _ = 1ULL << 63;
     u64_t d = 1UL << 037;
 
     union {
@@ -49,9 +55,8 @@ int main(int argc, char *argv[])
     } c;
 
     const unsigned char *f;
-    u64_t binary, binary_size, X, i, e, z, A, Q, M = -~9, Y;
+    u64_t binary, binary_size, X, i, e, z, A, Q, Y;
 
-    r++;
     u64_t t, y=0, v[5];
     const void *j[] = {
         &&laajavuori,
@@ -63,20 +68,20 @@ int main(int argc, char *argv[])
         &&ounasvaara
     };
 
-    u64_t N[25] = {r, argc, 6, M, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62, 18, 39, 61, 20, 44};
+    u64_t N[25] = {1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62, 18, 39, 61, 20, 44};
 
-    for(; argv[r][a]; a++) {
-        T = T * M + argv[!u][a] - 48;
+    for(u64_t i0 = 0; argv[1][i0]; i0++) {
+        T = T * 10 + argv[1][i0] - 48;
     }
+    T >>= 3;
 
-    T >>= argc;
     binary = open(argv[--argc], F);
     u64_t w[25] = {
         _ | d | 32776,
-        d | r,
+        d | 1,
         _ | 32896,
         _ | d | 32897,
-        _ | d | M,
+        _ | d | 10,
         32778,
         _ + 128,
         _ | 32770,
@@ -84,7 +89,7 @@ int main(int argc, char *argv[])
         _ | 32905,
         _ | 139,
         d | 32907,
-        d | M,
+        d | 10,
         d | 32777,
         136,
         138,
@@ -95,19 +100,19 @@ int main(int argc, char *argv[])
         _ | d | 32768,
         _ | 32906,
         32898,
-        r,
+        1,
         _
     };
 
     i = 0;
-    u64_t O[25] = {M, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, argc, 20, 14, 22, 9, 6, r};
+    u64_t O[25] = {10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, argc, 20, 14, 22, 9, 6, 1};
 
     Y = H = binary_size = 12952;
     const unsigned char *binary_bytes = mmap(NULL, binary_size, PROT_READ, MAP_SHARED, binary, 0/*offset*/);
     memset(&c, 0, 200);
 
     z = 8 & 7;
-    r = T / 11[O];
+    u64_t r = T / 11[O];
     for(I = 2; I <= Y; x[I++>>4] |= (1<<(I & 4[N]))); {
         goto C;
     }
@@ -115,7 +120,7 @@ int main(int argc, char *argv[])
 ruka:
     for(I = 8*3; I--;) {
         for(a=0;a<5;a++) {
-            v[a] = c.K[a] ^ c.K[a + 8-3] ^ c.K[a + M] ^ c.K[a + 15] ^ c.K[a + M + M];
+            v[a] = c.K[a] ^ c.K[a + 5] ^ c.K[a + 10] ^ c.K[a + 15] ^ c.K[a + 20];
         }
         for(a=0;a<5;a++) {
             t = v[(a + 4) % 5] ^ (v[(a + 1) % 5] << 1 | v[(a + 1) % 5] >> '?');
@@ -217,7 +222,7 @@ laajavuori:
     a = (__DATE__[7]-48)*1000+(__DATE__[8]-48)*100+(__DATE__[9]-48)*10+__DATE__[10]-48;
     Q = __DATE__[2]=='p'?9:__DATE__[2]=='y'?5:__DATE__[2]=='n'?(__DATE__[1]=='u'?6:1):__DATE__[2]=='b'?2:__DATE__[2]=='r'?(*__DATE__=='M'?3:4):__DATE__[2]=='g'?8:__DATE__[2]=='t'?10:__DATE__[2]=='v'?11:__DATE__[2]=='l'?7:12;
 
-    goto *j[4 + (23 * Q / 9 + (Q > argc ? a - argc : a--) + (__DATE__[4] == 32 ? 0 : ((__DATE__[4] - 48) * M)) + __DATE__[5] - 45 + a / 4 + a / 0620 - a / 0x64) % 3];
+    goto *j[4 + (23 * Q / 9 + (Q > argc ? a - argc : a--) + (__DATE__[4] == 32 ? 0 : ((__DATE__[4] - 48) * 10)) + __DATE__[5] - 45 + a / 4 + a / 0620 - a / 0x64) % 3];
 
 ounasvaara:
     for (I = 2; I <= Y; I++) {
@@ -233,7 +238,7 @@ virpiniemi:
         char s[30] = {48, 48, '\0'};
         X = !!48;
         for (e = f[I++]; e ^ 0; e >>= 4) {
-            argc = e & 15, s[X--] = argc < M ? 48 | argc : argc + 'W';
+            argc = e & 15, s[X--] = argc < 10 ? 48 | argc : argc + 'W';
         }
         printf("%s", s);
     }
