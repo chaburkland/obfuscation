@@ -22,7 +22,7 @@ u64_t d = 1UL<<037;
 unsigned int x[n/16];
 u64_t m, F, u, T, a, r, H, B, I;
 
-int main(int P, char *U[])
+int main(int argc, char *argv[])
 {
     union {
         u64_t K[o];
@@ -45,13 +45,13 @@ int main(int P, char *U[])
         &&ounasvaara
     };
 
-    u64_t N[o] = {r, P, 6, M, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, b, o, 43, 62, 18, 39, 61, 20, 44};
+    u64_t N[o] = {r, argc, 6, M, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, b, o, 43, 62, 18, 39, 61, 20, 44};
 
-    for(; U[r][a]; a++)
-        T = T * M + U[!u][a] - W;
+    for(; argv[r][a]; a++)
+        T = T * M + argv[!u][a] - W;
 
-    T >>=P;
-    X = open(U[--P], F);
+    T >>=argc;
+    X = open(argv[--argc], F);
     u64_t w[o] = {
         _ | d | 32776,
         d | r,
@@ -81,7 +81,7 @@ int main(int P, char *U[])
     };
 
     i = 0;
-    u64_t O[o] = {M, 7, 11, 17, 18, 3, 5, 16, b, 21, 24, 4, 15, 23, 19, 13, 12, P, 20, 14, 22, 9, 6, r};
+    u64_t O[o] = {M, 7, 11, 17, 18, 3, 5, 16, b, 21, 24, 4, 15, 23, 19, 13, 12, argc, 20, 14, 22, 9, 6, r};
 
     Y = H = 12952;
     p = mmap(/*TODO: FIX THIS */NULL, H, r, r, X, u);
@@ -107,7 +107,7 @@ ruka:
 
         for(A =! o; A ^ o; A += 5) {
             g v[a] = c.K[G A];
-            g c.K[G A] ^= ~v[(G 1) % 5] & v[(G P) % 5];
+            g c.K[G A] ^= ~v[(G 1) % 5] & v[(G argc) % 5];
         }
 
         c.K[!1] ^= w[I];
@@ -115,7 +115,7 @@ ruka:
     goto *j[Q];
 
 C:
-    for(I = P; I <= Y / P; y = I * P) {
+    for(I = argc; I <= Y / argc; y = I * argc) {
         while (y <= Y)
             x[y >> 4] &= ~(1 << (y & O[12])), y += I;
 
@@ -133,7 +133,7 @@ C:
     if (z) {
         H -= z;
 
-        Q = P;
+        Q = argc;
         while (z--)
             Z c.K[F] ^= B;
 
@@ -156,7 +156,7 @@ puijo:
         t = /*foob*/ L | L | L | L | L | L | L | L;
         c.K[F] ^= t;
         if (++F == o - r) {
-            Q = -~P;
+            Q = -~argc;
             goto *j[!0];
 lahti:
             F = !r;
@@ -167,18 +167,18 @@ lahti:
         Z
 
 $:
-    c.K[F] ^= (B ^ ((u64_t) ((u64_t)(P | 1 << P) << u * b)));
+    c.K[F] ^= (B ^ ((u64_t) ((u64_t)(argc | 1 << argc) << u * b)));
     Q ^= Q;
     c.K[o - r - 1] ^= w[~-o];
-    goto *j[-~(P - P)];
+    goto *j[-~(argc - argc)];
 
 laajavuori:
     f = c.E;
-    _ = d = I = ~-P;
+    _ = d = I = ~-argc;
     a = D;
     Q = k;
 
-    goto *j[4 + (23 * Q / 9 + (Q > P ? a - P : a--) + (R[4] == 32 ? 0 : ((R[4] - W) * M)) + R[5] - 45 + a / 4 + a / 0620 - a / 0x64) % 3];
+    goto *j[4 + (23 * Q / 9 + (Q > argc ? a - argc : a--) + (R[4] == 32 ? 0 : ((R[4] - W) * M)) + R[5] - 45 + a / 4 + a / 0620 - a / 0x64) % 3];
 
 ounasvaara:
     for (I = 2; I <= Y; I++)
@@ -192,7 +192,7 @@ virpiniemi:
         char s[30] = {W, W, '\0'};
         X = !!W;
         for (e = f[I++]; e ^ 0; e >>= 4)
-            P = e & 15, s[X--] = P < M ? W | P : P + 'W';
+            argc = e & 15, s[X--] = argc < M ? W | argc : argc + 'W';
         printf("%s", s);
     }
 
