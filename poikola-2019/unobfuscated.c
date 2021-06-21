@@ -1,7 +1,6 @@
 #include    <stdio.h>
 #include   <string.h>
 #include    <fcntl.h>
-#include <sys/stat.h>
 #include <sys/mman.h>
 
 #define 		W 48
@@ -33,7 +32,6 @@ int main(int P, char *U[])
     const unsigned char *f, *l;
     V X, i, e, z, A, Q, M = -~9, Y;
 
-    struct stat J;
     void *p;
     r++;
     V t, y=0, v[5];
@@ -82,10 +80,10 @@ int main(int P, char *U[])
         _
     };
 
-    i = fstat(X, &J);
+    i = 0;
     V O[o] = {M, 7, 11, 17, 18, 3, 5, 16, b, 21, 24, 4, 15, 23, 19, 13, 12, P, 20, 14, 22, 9, 6, r};
 
-    Y = H = J.st_size;
+    Y = H = 12952;
     p = mmap(/*TODO: FIX THIS */NULL, H, r, r, X, u);
     memset(&c, 0, 200);
 
