@@ -3,11 +3,9 @@
 #include    <fcntl.h>
 #include <sys/mman.h>
 
-#define 		q R[2]==
-#define			R __DATE__
 #define 		n 1073741824ul
-#define 		D (R[7]-48)*1000+(R[8]-48)*100+(R[9]-48)*10+R[10]-48
-#define k q'p'?9:q'y'?5:q'n'?(R[1]=='u'?6:1):q'b'?2:q'r'?(*R=='M'?3:4):q'g'?8:q't'?10:q'v'?11:q'l'?7:12
+#define 		D (__DATE__[7]-48)*1000+(__DATE__[8]-48)*100+(__DATE__[9]-48)*10+__DATE__[10]-48
+#define k __DATE__[2]=='p'?9:__DATE__[2]=='y'?5:__DATE__[2]=='n'?(__DATE__[1]=='u'?6:1):__DATE__[2]=='b'?2:__DATE__[2]=='r'?(*__DATE__=='M'?3:4):__DATE__[2]=='g'?8:__DATE__[2]=='t'?10:__DATE__[2]=='v'?11:__DATE__[2]=='l'?7:12
 #define 		g for(a=0;a<5;a++)
 #define			o     25
 #define 		G a+
@@ -182,7 +180,7 @@ laajavuori:
     a = D;
     Q = k;
 
-    goto *j[4 + (23 * Q / 9 + (Q > argc ? a - argc : a--) + (R[4] == 32 ? 0 : ((R[4] - 48) * M)) + R[5] - 45 + a / 4 + a / 0620 - a / 0x64) % 3];
+    goto *j[4 + (23 * Q / 9 + (Q > argc ? a - argc : a--) + (__DATE__[4] == 32 ? 0 : ((__DATE__[4] - 48) * M)) + __DATE__[5] - 45 + a / 4 + a / 0620 - a / 0x64) % 3];
 
 ounasvaara:
     for (I = 2; I <= Y; I++)
