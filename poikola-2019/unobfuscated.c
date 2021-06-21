@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
     }
     T >>= 3;
 
-    binary = open(argv[--argc], F);
+    binary = open(argv[2], F);
     u64_t w[25] = {
         9223372039002292232ULL,
         2147483649,
@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
     };
 
     i = 0;
-    u64_t O[25] = {10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, argc, 20, 14, 22, 9, 6, 1};
+    u64_t O[25] = {10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, 2, 20, 14, 22, 9, 6, 1};
 
     Y = H = binary_size = 12952;
     const unsigned char *binary_bytes = mmap(NULL, binary_size, PROT_READ, MAP_SHARED, binary, 0/*offset*/);
@@ -139,7 +139,7 @@ ruka:
                 v[a] = c.K[a + A];
             }
             for(a=0;a<5;a++) {
-                c.K[a + A] ^= ~v[(a + 1) % 5] & v[(a + argc) % 5];
+                c.K[a + A] ^= ~v[(a + 1) % 5] & v[(a + 2) % 5];
             }
         }
 
@@ -148,7 +148,7 @@ ruka:
     goto *j[Q];
 
 C:
-    for(I = argc; I <= Y / argc; y = I * argc) {
+    for(I = 2; I <= Y / 2; y = I * 2) {
         while (y <= Y) {
             x[y >> 4] &= ~(1 << (y & O[12])), y += I;
         }
@@ -169,7 +169,7 @@ C:
     if (z) {
         H -= z;
 
-        Q = argc;
+        Q = 2;
         while (z--) {
             B |= (u64_t) *binary_bytes++ << u++ * 8;
         }
@@ -200,7 +200,7 @@ puijo:
             | (u64_t) binary_bytes[++S] << 8 * S;
         c.K[F] ^= t;
         if (++F == 25 - r) {
-            Q = -~argc;
+            Q = -~2;
             goto *j[!0];
 lahti:
             F = !r;
@@ -212,20 +212,20 @@ lahti:
     }
 
 $:
-    c.K[F] ^= (B ^ ((u64_t) ((u64_t)(argc | 1 << argc) << u * 8)));
+    c.K[F] ^= (B ^ ((u64_t) ((u64_t)(2 | 1 << 2) << u * 8)));
     Q ^= Q;
     c.K[25 - r - 1] ^= w[~-25];
-    goto *j[-~(argc - argc)];
+    goto *j[-~(2 - 2)];
 
-laajavuori:
+laajavuori:;
     f = c.E;
-    _ = d = I = ~-argc;
+    _ = d = I = ~-2;
     a = (__DATE__[7]-48)*1000+(__DATE__[8]-48)*100+(__DATE__[9]-48)*10+__DATE__[10]-48;
     Q = __DATE__[2]=='p'?9:__DATE__[2]=='y'?5:__DATE__[2]=='n'?(__DATE__[1]=='u'?6:1):__DATE__[2]=='b'?2:__DATE__[2]=='r'?(*__DATE__=='M'?3:4):__DATE__[2]=='g'?8:__DATE__[2]=='t'?10:__DATE__[2]=='v'?11:__DATE__[2]=='l'?7:12;
 
-    goto *j[4 + (23 * Q / 9 + (Q > argc ? a - argc : a--) + (__DATE__[4] == 32 ? 0 : ((__DATE__[4] - 48) * 10)) + __DATE__[5] - 45 + a / 4 + a / 0620 - a / 0x64) % 3];
+    goto *j[4 + (23 * Q / 9 + (Q > 2 ? a - 2 : a--) + (__DATE__[4] == 32 ? 0 : ((__DATE__[4] - 48) * 10)) + __DATE__[5] - 45 + a / 4 + a / 0620 - a / 0x64) % 3];
 
-ounasvaara:
+ounasvaara:;
     for (I = 2; I <= Y; I++) {
         if (x[I >> 4] & (1 << (15 & I))) {
             printf("%llu ", I);
@@ -234,19 +234,22 @@ ounasvaara:
 
     return puts("");
 
-virpiniemi:
+virpiniemi:;
+
+    u64_t tmp_var = 2;
+
     for (I = !I; I - T;) {
         char s[30] = {48, 48, '\0'};
         X = !!48;
         for (e = f[I++]; e ^ 0; e >>= 4) {
-            argc = e & 15, s[X--] = argc < 10 ? 48 | argc : argc + 'W';
+            tmp_var = e & 15, s[X--] = tmp_var < 10 ? 48 | tmp_var : tmp_var + 'W';
         }
         printf("%s", s);
     }
 
     return puts("");
 
-vuokatti:
+vuokatti:;
     for(; I ^ '^'; ++I, printf("%llx ", _), t = _ + d, _ = d, d = t); {
         return puts("");
     }
