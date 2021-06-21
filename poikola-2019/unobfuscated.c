@@ -3,12 +3,10 @@
 #include    <fcntl.h>
 #include <sys/mman.h>
 
-#define 		W 48
-#define 		b '\b'
 #define 		q R[2]==
 #define			R __DATE__
 #define 		n 1073741824ul
-#define 		D (R[7]-W)*1000+(R[b]-W)*100+(R[9]-W)*10+R[10]-W
+#define 		D (R[7]-48)*1000+(R[8]-48)*100+(R[9]-48)*10+R[10]-48
 #define k q'p'?9:q'y'?5:q'n'?(R[1]=='u'?6:1):q'b'?2:q'r'?(*R=='M'?3:4):q'g'?8:q't'?10:q'v'?11:q'l'?7:12
 #define 		g for(a=0;a<5;a++)
 #define			o     25
@@ -42,10 +40,10 @@ int main(int argc, char *argv[])
         &&ounasvaara
     };
 
-    u64_t N[o] = {r, argc, 6, M, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, b, o, 43, 62, 18, 39, 61, 20, 44};
+    u64_t N[o] = {r, argc, 6, M, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, o, 43, 62, 18, 39, 61, 20, 44};
 
     for(; argv[r][a]; a++)
-        T = T * M + argv[!u][a] - W;
+        T = T * M + argv[!u][a] - 48;
 
     T >>= argc;
     binary = open(argv[--argc], F);
@@ -78,20 +76,20 @@ int main(int argc, char *argv[])
     };
 
     i = 0;
-    u64_t O[o] = {M, 7, 11, 17, 18, 3, 5, 16, b, 21, 24, 4, 15, 23, 19, 13, 12, argc, 20, 14, 22, 9, 6, r};
+    u64_t O[o] = {M, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, argc, 20, 14, 22, 9, 6, r};
 
     Y = H = binary_size = 12952;
     const unsigned char *binary_bytes = mmap(NULL, binary_size, PROT_READ, MAP_SHARED, binary, 0/*offset*/);
     memset(&c, 0, 200);
 
-    z = b & 7;
+    z = 8 & 7;
     r = T / 11[O];
     for(I = 2; I <= Y; x[I++>>4] |= (1<<(I & 4[N])));
         goto C;
 
 ruka:
-    for(I = b*3; I--;) {
-        g v[a] = c.K[a] ^ c.K[G b-3] ^ c.K[G M] ^ c.K[G 15] ^ c.K[G M + M];
+    for(I = 8*3; I--;) {
+        g v[a] = c.K[a] ^ c.K[G 8-3] ^ c.K[G M] ^ c.K[G 15] ^ c.K[G M + M];
         g {
             t = v[(G 4) % 5] ^ (v[(G 1) % 5] << 1 | v[(G 1) % 5] >> '?');
             for(A = 0; A < o; A +=5)
@@ -122,7 +120,7 @@ C:
 
     if(H < z) {
         while (H--) {
-            B |= (u64_t) *binary_bytes++ << u++ * b;
+            B |= (u64_t) *binary_bytes++ << u++ * 8;
         }
         goto $;
     }
@@ -132,33 +130,33 @@ C:
 
         Q = argc;
         while (z--) {
-            B |= (u64_t) *binary_bytes++ << u++ * b;
+            B |= (u64_t) *binary_bytes++ << u++ * 8;
         }
 
         B = u = i;
 
         if (o - r == ++F) {
-            goto *j[!!b];
+            goto *j[!!8];
 
 puijo:
             F = !o;
         }
     }
 
-    m = H / b;
-    e = H - m * b;
+    m = H / 8;
+    e = H - m * 8;
 
-    for (; i < m; binary_bytes += b) {
+    for (; i < m; binary_bytes += 8) {
         i++;
-        u64_t S =~ -! W;
-        t = (u64_t) binary_bytes[++S] << b * S
-            | (u64_t) binary_bytes[++S] << b * S
-            | (u64_t) binary_bytes[++S] << b * S
-            | (u64_t) binary_bytes[++S] << b * S
-            | (u64_t) binary_bytes[++S] << b * S
-            | (u64_t) binary_bytes[++S] << b * S
-            | (u64_t) binary_bytes[++S] << b * S
-            | (u64_t) binary_bytes[++S] << b * S;
+        u64_t S =~ -! 48;
+        t = (u64_t) binary_bytes[++S] << 8 * S
+            | (u64_t) binary_bytes[++S] << 8 * S
+            | (u64_t) binary_bytes[++S] << 8 * S
+            | (u64_t) binary_bytes[++S] << 8 * S
+            | (u64_t) binary_bytes[++S] << 8 * S
+            | (u64_t) binary_bytes[++S] << 8 * S
+            | (u64_t) binary_bytes[++S] << 8 * S
+            | (u64_t) binary_bytes[++S] << 8 * S;
         c.K[F] ^= t;
         if (++F == o - r) {
             Q = -~argc;
@@ -169,11 +167,11 @@ lahti:
     }
 
     while (e--) {
-        B |= (u64_t) *binary_bytes++ << u++ * b;
+        B |= (u64_t) *binary_bytes++ << u++ * 8;
     }
 
 $:
-    c.K[F] ^= (B ^ ((u64_t) ((u64_t)(argc | 1 << argc) << u * b)));
+    c.K[F] ^= (B ^ ((u64_t) ((u64_t)(argc | 1 << argc) << u * 8)));
     Q ^= Q;
     c.K[o - r - 1] ^= w[~-o];
     goto *j[-~(argc - argc)];
@@ -184,7 +182,7 @@ laajavuori:
     a = D;
     Q = k;
 
-    goto *j[4 + (23 * Q / 9 + (Q > argc ? a - argc : a--) + (R[4] == 32 ? 0 : ((R[4] - W) * M)) + R[5] - 45 + a / 4 + a / 0620 - a / 0x64) % 3];
+    goto *j[4 + (23 * Q / 9 + (Q > argc ? a - argc : a--) + (R[4] == 32 ? 0 : ((R[4] - 48) * M)) + R[5] - 45 + a / 4 + a / 0620 - a / 0x64) % 3];
 
 ounasvaara:
     for (I = 2; I <= Y; I++)
@@ -195,10 +193,10 @@ ounasvaara:
 
 virpiniemi:
     for (I = !I; I - T;) {
-        char s[30] = {W, W, '\0'};
-        X = !!W;
+        char s[30] = {48, 48, '\0'};
+        X = !!48;
         for (e = f[I++]; e ^ 0; e >>= 4)
-            argc = e & 15, s[X--] = argc < M ? W | argc : argc + 'W';
+            argc = e & 15, s[X--] = argc < M ? 48 | argc : argc + 'W';
         printf("%s", s);
     }
 
