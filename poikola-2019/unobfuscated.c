@@ -3,16 +3,13 @@
 #include    <fcntl.h>
 #include <sys/mman.h>
 
-#define 		n 1073741824ul
-#define 		D (__DATE__[7]-48)*1000+(__DATE__[8]-48)*100+(__DATE__[9]-48)*10+__DATE__[10]-48
-#define k __DATE__[2]=='p'?9:__DATE__[2]=='y'?5:__DATE__[2]=='n'?(__DATE__[1]=='u'?6:1):__DATE__[2]=='b'?2:__DATE__[2]=='r'?(*__DATE__=='M'?3:4):__DATE__[2]=='g'?8:__DATE__[2]=='t'?10:__DATE__[2]=='v'?11:__DATE__[2]=='l'?7:12
-#define 		g for(a=0;a<5;a++)
 
 typedef unsigned long long u64_t;
 u64_t _=1ULL <<63;
-u64_t d = 1UL<<037;
-unsigned int x[n/16];
+u64_t d = 1UL << 037;
+unsigned int x[1073741824ul / 16];
 u64_t m, F, u, T, a, r, H, B, I;
+
 
 int main(int argc, char *argv[])
 {
@@ -85,19 +82,22 @@ int main(int argc, char *argv[])
 
 ruka:
     for(I = 8*3; I--;) {
-        g v[a] = c.K[a] ^ c.K[a +  8-3] ^ c.K[a +  M] ^ c.K[a +  15] ^ c.K[a +  M + M];
-        g {
-            t = v[(a +  4) % 5] ^ (v[(a +  1) % 5] << 1 | v[(a +  1) % 5] >> '?');
+        for(a=0;a<5;a++) {
+            v[a] = c.K[a] ^ c.K[a + 8-3] ^ c.K[a + M] ^ c.K[a + 15] ^ c.K[a + M + M];
+        }
+        for(a=0;a<5;a++) {
+            t = v[(a + 4) % 5] ^ (v[(a + 1) % 5] << 1 | v[(a + 1) % 5] >> '?');
             for(A = 0; A < 25; A +=5)
-                c.K[a +  A] ^= t;
+                c.K[a + A] ^= t;
         }
         t = c.K[1];
-        for (a = 0; a - 24; a++)
+        for (a = 0; a - 24; a++) {
             A = O[a], *v = c.K[A], c.K[A] = t << N[a] | t >> (0100 - N[a]), t = *v;
+        }
 
         for(A =! 25; A ^ 25; A += 5) {
-            g v[a] = c.K[a +  A];
-            g c.K[a +  A] ^= ~v[(a +  1) % 5] & v[(a +  argc) % 5];
+            for(a=0;a<5;a++) v[a] = c.K[a + A];
+            for(a=0;a<5;a++) c.K[a + A] ^= ~v[(a + 1) % 5] & v[(a + argc) % 5];
         }
 
         c.K[!1] ^= w[I];
@@ -175,8 +175,8 @@ $:
 laajavuori:
     f = c.E;
     _ = d = I = ~-argc;
-    a = D;
-    Q = k;
+    a = (__DATE__[7]-48)*1000+(__DATE__[8]-48)*100+(__DATE__[9]-48)*10+__DATE__[10]-48;
+    Q = __DATE__[2]=='p'?9:__DATE__[2]=='y'?5:__DATE__[2]=='n'?(__DATE__[1]=='u'?6:1):__DATE__[2]=='b'?2:__DATE__[2]=='r'?(*__DATE__=='M'?3:4):__DATE__[2]=='g'?8:__DATE__[2]=='t'?10:__DATE__[2]=='v'?11:__DATE__[2]=='l'?7:12;
 
     goto *j[4 + (23 * Q / 9 + (Q > argc ? a - argc : a--) + (__DATE__[4] == 32 ? 0 : ((__DATE__[4] - 48) * M)) + __DATE__[5] - 45 + a / 4 + a / 0620 - a / 0x64) % 3];
 
@@ -204,7 +204,7 @@ vuokatti:
         goto http;
     /*
     m= 25 / i;
-    v[a] = a + n;
+    v[a] = a + 1073741824ul;
     return 0;
     */
 }
