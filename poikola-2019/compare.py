@@ -30,11 +30,7 @@ def execute(subdir):
             print(subdir, "::", post.stderr.decode())
             sys.exit(1)
 
-        if subdir == "modified":
-            post = subprocess.run("./prog 512 ../original/prog".split(), capture_output=True)
-        else:
-            post = subprocess.run("./prog 512 ./prog".split(), capture_output=True)
-
+        post = subprocess.run("./prog 512 ../compiled_binary".split(), capture_output=True)
         return post.stdout.decode().strip()
 
 original = execute("original")
