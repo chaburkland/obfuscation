@@ -2,17 +2,47 @@
 #include   <string.h>
 #include    <fcntl.h>
 #include <sys/mman.h>
+#include <time.h>
 
+#define SPACE ' '
+#define ZERO '0'
 
 typedef unsigned long long u64_t;
-u64_t _=1ULL <<63;
-u64_t d = 1UL << 037;
-unsigned int x[1073741824ul / 16];
-u64_t m, F, u, T, a, r, H, B, I;
+unsigned int x[67108864];
 
+u64_t T, B;
+
+int
+determine_random_label_from_date()
+{
+    time_t current_time = time(NULL);
+    u64_t month = localtime(&current_time)->tm_mon + 1;
+
+    u64_t seed = (__DATE__[7] - ZERO) * 1000 +
+                 (__DATE__[8] - ZERO) * 100 +
+                 (__DATE__[9] - ZERO) * 10 +
+                 (__DATE__[10] - ZERO);
+
+    u64_t random_label = 4 + (
+        (23 * month / 9) +
+        (month > 2 ? seed - 2 : seed--) +
+        (__DATE__[4] == SPACE ? 0 : ((__DATE__[4] - ZERO) * 10)) +
+        __DATE__[5] -
+        45 +
+        (seed / 4) +
+        (seed / 400) -
+        (seed / 100)
+    ) % 3;
+
+    return random_label;
+}
 
 int main(int argc, char *argv[])
 {
+    u64_t m, F, u, a, r, H, I;
+    u64_t _ = 1ULL <<63;
+    u64_t d = 1UL << 037;
+
     union {
         u64_t K[25];
         unsigned char E[1];
