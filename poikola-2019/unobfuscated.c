@@ -99,6 +99,59 @@ laajavuori(const unsigned char *f, u64_t T, unsigned int *x)
     return puts("");
 }
 
+void
+init(unsigned int *x)
+{
+    u64_t y = 0;
+    for(u64_t i = 2; i <= (BINARY_SIZE / 2);) {
+        while (y <= BINARY_SIZE) {
+            x[y >> 4] &= ~(1 << (y & 0xF));
+            y += i;
+        }
+
+        do {
+            i++;
+        }
+        while(~x[i >> 4] & (1 << (i & 0xF)));
+
+        y = i * 2;
+    }
+}
+
+void
+ruka_main_loop(u64_t *v, u64_t *K, u64_t t, u64_t *O, u64_t *N, u64_t *w)
+{
+    for(u64_t i = 24; i--;) {
+        for(u64_t j = 0; j < 5; ++j) {
+            v[j] = K[j] ^ K[j + 5] ^ K[j + 10] ^ K[j + 15] ^ K[j + 20];
+        }
+        for(u64_t j = 0; j < 5; ++j) {
+            t = v[(j + 4) % 5] ^ (v[(j + 1) % 5] << 1 | v[(j + 1) % 5] >> 63);
+            for(u64_t k = 0; k < 25; k += 5) {
+                K[j + k] ^= t;
+            }
+        }
+        t = K[1];
+        for (u64_t j = 0; j - 24; ++j) {
+            u64_t tmp_idx = O[j];
+            *v = K[tmp_idx];
+            K[tmp_idx] = t << N[j] | t >> (64 - N[j]);
+            t = *v;
+        }
+
+        for(u64_t j = 0; j < 25; j += 5) {
+            for(u64_t k = 0; k < 5; ++k) {
+                v[k] = K[k + j];
+            }
+            for(u64_t k = 0; k < 5; ++k) {
+                K[k + j] ^= ~v[(k + 1) % 5] & v[(k + 2) % 5];
+            }
+        }
+
+        K[0] ^= w[i];
+    }
+}
+
 int main(int argc, char *argv[])
 {
     UNUSED(argc);
@@ -172,63 +225,19 @@ int main(int argc, char *argv[])
     goto C;
 
 ruka:
-    for(u64_t i = 24; i--;) {
-        for(u64_t j = 0; j < 5; ++j) {
-            v[j] = c.K[j] ^ c.K[j + 5] ^ c.K[j + 10] ^ c.K[j + 15] ^ c.K[j + 20];
-        }
-        for(u64_t j = 0; j < 5; ++j) {
-            t = v[(j + 4) % 5] ^ (v[(j + 1) % 5] << 1 | v[(j + 1) % 5] >> 63);
-            for(u64_t k = 0; k < 25; k += 5) {
-                c.K[j + k] ^= t;
-            }
-        }
-        t = c.K[1];
-        for (u64_t j = 0; j - 24; ++j) {
-            u64_t tmp_idx = O[j];
-            *v = c.K[tmp_idx];
-            c.K[tmp_idx] = t << N[j] | t >> (64 - N[j]);
-            t = *v;
-        }
-
-        for(u64_t j = 0; j < 25; j += 5) {
-            for(u64_t k = 0; k < 5; ++k) {
-                v[k] = c.K[k + j];
-            }
-            for(u64_t k = 0; k < 5; ++k) {
-                c.K[k + j] ^= ~v[(k + 1) % 5] & v[(k + 2) % 5];
-            }
-        }
-
-        c.K[!1] ^= w[i];
-    }
+    ruka_main_loop(v, c.K, t, O, N, w);
 
     if (do_after_ruka == call_laajavuori) {
         return laajavuori(c.E, T, x);
     }
-    else {
-        goto lahti;
-    }
+
+    goto lahti;
 
 C:;
-    u64_t y = 0;
-    for(u64_t i = 2; i <= BINARY_SIZE / 2;) {
-        while (y <= BINARY_SIZE) {
-            x[y >> 4] &= ~(1 << (y & 0xF));
-            y += i;
-        }
-
-        do {
-            i++;
-        }
-        while(~x[i >> 4] & (1 << (i & 0xF)));
-
-        y = i * 2;
-    }
-
+    init(x);
     u64_t F = 0;
 
-    for (u64_t i = 0; i < BINARY_SIZE / 8; binary_bytes += 8) {
-        i++;
+    for (u64_t i = 0; i < (BINARY_SIZE / 8); ++i) {
         u64_t S = (u64_t)-1;
         t = 0;
         for (u64_t j = 0; j < 8; ++j) {
@@ -242,6 +251,7 @@ C:;
 lahti:
             F = !r;
         }
+        binary_bytes += 8;
     }
 
     u64_t B = 0;
