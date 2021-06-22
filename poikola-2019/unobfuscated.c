@@ -98,7 +98,6 @@ int main(int argc, char *argv[])
     // argv[2] = compiled_binary
     u64_t F = 0;
     u64_t u = 0;
-    u64_t a = 0;
 
     union {
         u64_t K[25];
@@ -173,29 +172,29 @@ int main(int argc, char *argv[])
 
 ruka:
     for(u64_t i0 = 24; i0--;) {
-        for(a=0;a<5;a++) {
-            v[a] = c.K[a] ^ c.K[a + 5] ^ c.K[a + 10] ^ c.K[a + 15] ^ c.K[a + 20];
+        for(u64_t i1 = 0; i1 < 5; ++i1) {
+            v[i1] = c.K[i1] ^ c.K[i1 + 5] ^ c.K[i1 + 10] ^ c.K[i1 + 15] ^ c.K[i1 + 20];
         }
-        for(a=0;a<5;a++) {
-            t = v[(a + 4) % 5] ^ (v[(a + 1) % 5] << 1 | v[(a + 1) % 5] >> '?');
+        for(u64_t i1 = 0; i1 < 5; ++i1) {
+            t = v[(i1 + 4) % 5] ^ (v[(i1 + 1) % 5] << 1 | v[(i1 + 1) % 5] >> 63);
             for(u64_t i2 = 0; i2 < 25; i2 += 5) {
-                c.K[a + i2] ^= t;
+                c.K[i1 + i2] ^= t;
             }
         }
         t = c.K[1];
-        for (a = 0; a - 24; a++) {
-            u64_t tmp_idx = O[a];
+        for (u64_t i1 = 0; i1 - 24; ++i1) {
+            u64_t tmp_idx = O[i1];
             *v = c.K[tmp_idx];
-            c.K[tmp_idx] = t << N[a] | t >> (0100 - N[a]);
+            c.K[tmp_idx] = t << N[i1] | t >> (0100 - N[i1]);
             t = *v;
         }
 
         for(u64_t i1 = 0; i1 < 25; i1 += 5) {
-            for(a=0;a<5;a++) {
-                v[a] = c.K[a + i1];
+            for(u64_t i2 = 0; i2 < 5; ++i2) {
+                v[i2] = c.K[i2 + i1];
             }
-            for(a=0;a<5;a++) {
-                c.K[a + i1] ^= ~v[(a + 1) % 5] & v[(a + 2) % 5];
+            for(u64_t i2 = 0; i2 < 5; ++i2) {
+                c.K[i2 + i1] ^= ~v[(i2 + 1) % 5] & v[(i2 + 2) % 5];
             }
         }
 
