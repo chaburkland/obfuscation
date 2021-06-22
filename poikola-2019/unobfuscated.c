@@ -34,7 +34,7 @@ fibonacci()
     u64_t last = 1;
     u64_t last_last = 1;
 
-    for(u64_t i0 = 0; i0 < 93; ++i0) {
+    for(u64_t i = 0; i < 93; ++i) {
         printf("%llx ", last);
         u64_t tmp = last + last_last;
         last = last_last;
@@ -48,13 +48,13 @@ int
 virpiniemi(const unsigned char *f, u64_t T)
 {
     // Cleaned up 06/21/2021
-    for (u64_t i0 = 0; i0 < T; ++i0) {
+    for (u64_t i = 0; i < T; ++i) {
         char result[2] = {48, 48, '\0'};
 
         u64_t s_idx = 1;
 
-        for (u64_t i1 = f[i0]; i1 ^ 0; i1 >>= 4) { // Always runs twice
-            u64_t tmp_var = i1 & 15;
+        for (u64_t j = f[i]; j ^ 0; j >>= 4) { // Always runs twice
+            u64_t tmp_var = j & 15;
             if (tmp_var < 10) {
                 result[s_idx] = tmp_var | 48;
             }
@@ -83,9 +83,9 @@ laajavuori(const unsigned char *f, u64_t T, unsigned int *x)
 
     // Cleaned up 06/21/2021
     // Generate all primes until (BINARY_SIZE / 16)
-    for (u64_t i0 = 2; i0 <= BINARY_SIZE; ++i0) {
-        if (x[i0 >> 4] & (1 << (0xF & i0))) {
-            printf("%llu ", i0);
+    for (u64_t i = 2; i <= BINARY_SIZE; ++i) {
+        if (x[i >> 4] & (1 << (0xF & i))) {
+            printf("%llu ", i);
         }
     }
     return puts("");
@@ -121,8 +121,8 @@ int main(int argc, char *argv[])
     u64_t N[25] = {1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62, 18, 39, 61, 20, 44};
 
     u64_t T = 0;
-    for(u64_t i0 = 0; argv[1][i0]; i0++) {
-        T = T * 10 + argv[1][i0] - 48;
+    for(u64_t i = 0; argv[1][i]; i++) {
+        T = T * 10 + argv[1][i] - 48;
     }
     T >>= 3;
 
@@ -155,7 +155,6 @@ int main(int argc, char *argv[])
         9223372036854775808ULL,
     };
 
-    u64_t i = 0;
     u64_t O[25] = {10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, 2, 20, 14, 22, 9, 6, 1};
 
     const unsigned char *binary_bytes = mmap(NULL, BINARY_SIZE, PROT_READ, MAP_SHARED, binary_fileno, 0);
@@ -165,40 +164,40 @@ int main(int argc, char *argv[])
     unsigned int x[(BINARY_SIZE / 16) + 1];
     memset(x, 0, (BINARY_SIZE / 16) + 1);
 
-    for(u64_t i0 = 2; i0 <= BINARY_SIZE; ++i0) {
-        x[i0 >> 4] |= (1 << (i0 & 0xF));
+    for(u64_t i = 2; i <= BINARY_SIZE; ++i) {
+        x[i >> 4] |= (1 << (i & 0xF));
     }
     goto C;
 
 ruka:
-    for(u64_t i0 = 24; i0--;) {
-        for(u64_t i1 = 0; i1 < 5; ++i1) {
-            v[i1] = c.K[i1] ^ c.K[i1 + 5] ^ c.K[i1 + 10] ^ c.K[i1 + 15] ^ c.K[i1 + 20];
+    for(u64_t i = 24; i--;) {
+        for(u64_t j = 0; j < 5; ++j) {
+            v[j] = c.K[j] ^ c.K[j + 5] ^ c.K[j + 10] ^ c.K[j + 15] ^ c.K[j + 20];
         }
-        for(u64_t i1 = 0; i1 < 5; ++i1) {
-            t = v[(i1 + 4) % 5] ^ (v[(i1 + 1) % 5] << 1 | v[(i1 + 1) % 5] >> 63);
-            for(u64_t i2 = 0; i2 < 25; i2 += 5) {
-                c.K[i1 + i2] ^= t;
+        for(u64_t j = 0; j < 5; ++j) {
+            t = v[(j + 4) % 5] ^ (v[(j + 1) % 5] << 1 | v[(j + 1) % 5] >> 63);
+            for(u64_t k = 0; k < 25; k += 5) {
+                c.K[j + k] ^= t;
             }
         }
         t = c.K[1];
-        for (u64_t i1 = 0; i1 - 24; ++i1) {
-            u64_t tmp_idx = O[i1];
+        for (u64_t j = 0; j - 24; ++j) {
+            u64_t tmp_idx = O[j];
             *v = c.K[tmp_idx];
-            c.K[tmp_idx] = t << N[i1] | t >> (0100 - N[i1]);
+            c.K[tmp_idx] = t << N[j] | t >> (0100 - N[j]);
             t = *v;
         }
 
-        for(u64_t i1 = 0; i1 < 25; i1 += 5) {
-            for(u64_t i2 = 0; i2 < 5; ++i2) {
-                v[i2] = c.K[i2 + i1];
+        for(u64_t j = 0; j < 25; j += 5) {
+            for(u64_t k = 0; k < 5; ++k) {
+                v[k] = c.K[k + j];
             }
-            for(u64_t i2 = 0; i2 < 5; ++i2) {
-                c.K[i2 + i1] ^= ~v[(i2 + 1) % 5] & v[(i2 + 2) % 5];
+            for(u64_t k = 0; k < 5; ++k) {
+                c.K[k + j] ^= ~v[(k + 1) % 5] & v[(k + 2) % 5];
             }
         }
 
-        c.K[!1] ^= w[i0];
+        c.K[!1] ^= w[i];
     }
 
     if (do_after_ruka == call_laajavuori) {
@@ -209,31 +208,27 @@ ruka:
     }
 
 C:
-    for(u64_t i0 = 2; i0 <= BINARY_SIZE / 2; y = i0 * 2) {
+    for(u64_t i = 2; i <= BINARY_SIZE / 2; y = i * 2) {
         while (y <= BINARY_SIZE) {
-            x[y >> 4] &= ~(1 << (y & 15)), y += i0;
+            x[y >> 4] &= ~(1 << (y & 15)), y += i;
         }
 
         do {
-            i0++;
+            i++;
         }
-        while(~x[i0 >> 4] & (1 << (i0 & 15)));
+        while(~x[i >> 4] & (1 << (i & 15)));
     }
 
     u64_t m = BINARY_SIZE / 8;
     e = BINARY_SIZE - m * 8;
 
-    for (; i < m; binary_bytes += 8) {
+    for (u64_t i = 0; i < m; binary_bytes += 8) {
         i++;
-        u64_t S =~ -! 48;
-        t = (u64_t) binary_bytes[++S] << 8 * S
-            | (u64_t) binary_bytes[++S] << 8 * S
-            | (u64_t) binary_bytes[++S] << 8 * S
-            | (u64_t) binary_bytes[++S] << 8 * S
-            | (u64_t) binary_bytes[++S] << 8 * S
-            | (u64_t) binary_bytes[++S] << 8 * S
-            | (u64_t) binary_bytes[++S] << 8 * S
-            | (u64_t) binary_bytes[++S] << 8 * S;
+        u64_t S = (u64_t)-1;
+        t = 0;
+        for (u64_t j = 0; j < 8; ++j) {
+            t |= (u64_t)binary_bytes[++S] << 8 * S;
+        }
         c.K[F] ^= t;
         if (++F == 25 - r) {
             do_after_ruka = goto_lahti_label;
