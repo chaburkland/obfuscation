@@ -13,25 +13,19 @@ int
 determine_random_label_from_date()
 {
     time_t current_time = time(NULL);
+    u64_t day = localtime(&current_time)->tm_mday;
     u64_t month = localtime(&current_time)->tm_mon + 1;
+    u64_t year = localtime(&current_time)->tm_year + 1900;
 
-    u64_t seed = (__DATE__[7] - ZERO) * 1000 +
-                 (__DATE__[8] - ZERO) * 100 +
-                 (__DATE__[9] - ZERO) * 10 +
-                 (__DATE__[10] - ZERO);
-
-    u64_t random_label = 4 + (
+    return (
         (23 * month / 9) +
-        (month > 2 ? seed - 2 : seed--) +
-        (__DATE__[4] == SPACE ? 0 : ((__DATE__[4] - ZERO) * 10)) +
-        __DATE__[5] -
+        day -
         45 +
-        (seed / 4) +
-        (seed / 400) -
-        (seed / 100)
+        (month > 2 ? year - 2 : year--) +
+        (year / 4) +
+        (year / 400) -
+        (year / 100)
     ) % 3;
-
-    return random_label;
 }
 
 int main(int argc, char *argv[])
@@ -51,20 +45,18 @@ int main(int argc, char *argv[])
         unsigned char E[1];
     } c;
 
+    enum LabelEnum {
+        laajavuori_label = 0,
+        lahti_label = 1,
+    };
+
+    u64_t goto_after_ruka = laajavuori_label;
+
     const unsigned char *f;
-    u64_t binary_size, i, A, Q;
+    u64_t binary_size, i, A;
     u64_t e = 0;
 
     u64_t t, y=0, v[5];
-    const void *j[] = {
-        &&laajavuori,
-        &&ruka,
-        &&puijo,
-        &&lahti,
-        &&vuokatti,
-        &&virpiniemi,
-        &&ounasvaara
-    };
 
     u64_t N[25] = {1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62, 18, 39, 61, 20, 44};
 
@@ -146,7 +138,16 @@ ruka:
 
         c.K[!1] ^= w[I];
     }
-    goto *j[Q];
+
+    switch (goto_after_ruka)
+    {
+    case laajavuori_label:
+        goto laajavuori;
+
+    case lahti_label:
+        goto lahti;
+
+    }
 
 C:
     for(I = 2; I <= binary_size / 2; y = I * 2) {
@@ -182,8 +183,8 @@ puijo:
             | (u64_t) binary_bytes[++S] << 8 * S;
         c.K[F] ^= t;
         if (++F == 25 - r) {
-            Q = -~2;
-            goto *j[!0];
+            goto_after_ruka = lahti_label;
+            goto ruka;
 lahti:
             F = !r;
         }
@@ -195,17 +196,23 @@ lahti:
     }
 
     c.K[F] ^= (B ^ ((u64_t) ((u64_t)(2 | 1 << 2) << u * 8)));
-    Q ^= Q;
-    c.K[25 - r - 1] ^= w[~-25];
-    goto *j[-~(2 - 2)];
+    goto_after_ruka = laajavuori_label;
+    c.K[25 - r - 1] ^= w[24];
+
+    goto ruka;
 
 laajavuori:;
     f = c.E;
     I = 1;
-    a = (__DATE__[7]-48)*1000+(__DATE__[8]-48)*100+(__DATE__[9]-48)*10+__DATE__[10]-48;
-    Q = __DATE__[2]=='p'?9:__DATE__[2]=='y'?5:__DATE__[2]=='n'?(__DATE__[1]=='u'?6:1):__DATE__[2]=='b'?2:__DATE__[2]=='r'?(*__DATE__=='M'?3:4):__DATE__[2]=='g'?8:__DATE__[2]=='t'?10:__DATE__[2]=='v'?11:__DATE__[2]=='l'?7:12;
 
-    goto *j[4 + (23 * Q / 9 + (Q > 2 ? a - 2 : a--) + (__DATE__[4] == 32 ? 0 : ((__DATE__[4] - 48) * 10)) + __DATE__[5] - 45 + a / 4 + a / 0620 - a / 0x64) % 3];
+    // Beginning of the end. All options will enter a label that ends the routine.
+    switch (determine_random_label_from_date())
+    {
+    case 0:
+        goto vuokatti;
+    case 1:
+        goto virpiniemi;
+    }
 
 ounasvaara:;
     // Cleaned up 06/21/2021
