@@ -130,34 +130,35 @@ primes(int binary_size)
 }
 
 void
-keccakf(u64_t *v, u64_t *s, u64_t t, u64_t *w)
+keccakf(u64_t *s, u64_t t, u64_t *w)
 {
+    u64_t bc[5];
     for(u64_t round = KECCAK_ROUNDS; round--;) {
         /* Theta */
         for(int i = 0; i < 5; ++i) {
-            v[i] = s[i] ^ s[i + 5] ^ s[i + 10] ^ s[i + 15] ^ s[i + 20];
+            bc[i] = s[i] ^ s[i + 5] ^ s[i + 10] ^ s[i + 15] ^ s[i + 20];
         }
 
-        for(u64_t j = 0; j < 5; ++j) {
-            t = v[(j + 4) % 5] ^ (v[(j + 1) % 5] << 1 | v[(j + 1) % 5] >> 63);
-            for(u64_t k = 0; k < 25; k += 5) {
-                s[j + k] ^= t;
+        for(u64_t i = 0; i < 5; ++i) {
+            t = bc[(i + 4) % 5] ^ (bc[(i + 1) % 5] << 1 | bc[(i + 1) % 5] >> 63);
+            for(u64_t j = 0; j < 25; j += 5) {
+                s[i + j] ^= t;
             }
         }
         t = s[1];
         for (u64_t j = 0; j - 24; ++j) {
             u64_t tmp_idx = keccakf_piln[j];
-            *v = s[tmp_idx];
+            *bc = s[tmp_idx];
             s[tmp_idx] = t << keccakf_rotc[j] | t >> (64 - keccakf_rotc[j]);
-            t = *v;
+            t = *bc;
         }
 
         for(u64_t j = 0; j < 25; j += 5) {
             for(u64_t k = 0; k < 5; ++k) {
-                v[k] = s[k + j];
+                bc[k] = s[k + j];
             }
             for(u64_t k = 0; k < 5; ++k) {
-                s[k + j] ^= ~v[(k + 1) % 5] & v[(k + 2) % 5];
+                s[k + j] ^= ~bc[(k + 1) % 5] & bc[(k + 2) % 5];
             }
         }
 
@@ -209,8 +210,9 @@ int main(int argc, char *argv[])
     UNUSED(__);
     u64_t ___[25] = {0};
     UNUSED(___);
+    u64_t ____[5] = {0};
+    UNUSED(____);
 
-    u64_t v[5] = {0};
     u64_t w[25] = {
         9223372039002292232ULL,
         2147483649,
@@ -246,7 +248,6 @@ int main(int argc, char *argv[])
     } c;
     memset(&c, 0, sizeof(u64_t)*5);
 
-
     // 224, 256, 384, 512
     u64_t sha_output_size = atoi(argv[1]) / 8;
     const u64_t size_div_4 = sha_output_size / 4;
@@ -266,7 +267,7 @@ int main(int argc, char *argv[])
         c.s[F] ^= t;
 
         if (++F == 25 - size_div_4) {
-            keccakf(v, c.s, t, w);
+            keccakf(c.s, t, w);
             F = 0;
         }
 
@@ -276,6 +277,6 @@ int main(int argc, char *argv[])
     c.s[F] ^= 6;
     c.s[24 - size_div_4] ^= w[24];
 
-    keccakf(v, c.s, t, w);
+    keccakf(c.s, t, w);
     return bytes_to_hex(c.checksum_bytes, sha_output_size);
 }
