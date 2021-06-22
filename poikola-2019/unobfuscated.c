@@ -52,7 +52,7 @@ static const u64_t keccakf_rndc[24] = {
 
 // Fully de-obfuscated 06/21/2021
 int
-determine_random_label_from_date()
+determine_program_output_from_date()
 {
     time_t current_time = time(NULL);
     int day = localtime(&current_time)->tm_mday;
@@ -74,7 +74,7 @@ determine_random_label_from_date()
         + (year / 4)
         + (year / 400)
         - (year / 100)
-    ) % 3;
+    );
 }
 
 // Fully de-obfuscated 06/21/2021
@@ -206,6 +206,48 @@ keccakf(u64_t *state)
     }
 }
 
+int
+sha3(const char *fp, int binary_size, const uint8_t *binary_bytes)
+{
+    union sha3_context {
+        u64_t state[25];
+        uint8_t checksum_bytes[1];
+    } ctx;
+    memset(&ctx, 0, sizeof(ctx));
+
+    // 224, 256, 384, 512
+    u64_t sha_output_size = atoi(fp) / 8;
+    const u64_t word_capacity = sha_output_size / 4;
+
+    u64_t word_index = 0;
+    u64_t saved = 0;
+
+    for (u64_t i = 0; i < (binary_size / 8); ++i) {
+        u64_t idx = (u64_t)-1;
+        saved = 0;
+
+        for (u64_t j = 0; j < 8; ++j) {
+            ++idx;
+            saved |= (u64_t)binary_bytes[idx] << 8 * idx;
+        }
+
+        ctx.state[word_index] ^= saved;
+
+        if (++word_index == SHA3_KECCAK_SPONGE_WORDS - word_capacity) {
+            keccakf(ctx.state);
+            word_index = 0;
+        }
+
+        binary_bytes += 8;
+    }
+
+    ctx.state[word_index] ^= 6;
+    ctx.state[24 - word_capacity] ^= 9223372036854775808ULL;
+
+    keccakf(ctx.state);
+    return bytes_to_hex(ctx.checksum_bytes, sha_output_size);
+}
+
 int main(int argc, char *argv[])
 {
     // argv[0] = executable
@@ -234,49 +276,13 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // switch (determine_random_label_from_date())
-    // {
-    // case 0:
-    //     return fibonacci();
-    // case 2:
-    //     return primes(st.st_size);
-    // }
-
-    union sha3_context {
-        u64_t state[25];
-        uint8_t checksum_bytes[1];
-    } ctx;
-    memset(&ctx, 0, sizeof(ctx));
-
-    // 224, 256, 384, 512
-    u64_t sha_output_size = atoi(argv[1]) / 8;
-    const u64_t word_capacity = sha_output_size / 4;
-
-    u64_t word_index = 0;
-    u64_t saved = 0;
-
-    for (u64_t i = 0; i < (st.st_size / 8); ++i) {
-        u64_t idx = (u64_t)-1;
-        saved = 0;
-
-        for (u64_t j = 0; j < 8; ++j) {
-            ++idx;
-            saved |= (u64_t)binary_bytes[idx] << 8 * idx;
-        }
-
-        ctx.state[word_index] ^= saved;
-
-        if (++word_index == SHA3_KECCAK_SPONGE_WORDS - word_capacity) {
-            keccakf(ctx.state);
-            word_index = 0;
-        }
-
-        binary_bytes += 8;
+    switch (determine_program_output_from_date() % 3)
+    {
+    case 0:
+        return fibonacci();
+    case 1:
+        return sha3(argv[1], st.st_size, binary_bytes);
+    case 2:
+        return primes(st.st_size);
     }
-
-    ctx.state[word_index] ^= 6;
-    ctx.state[24 - word_capacity] ^= 9223372036854775808ULL;
-
-    keccakf(ctx.state);
-    return bytes_to_hex(ctx.checksum_bytes, sha_output_size);
 }
