@@ -8,8 +8,19 @@
 #include <sys/stat.h>
 
 #define UNUSED(x) (void)(x)
+#define KECCAK_ROUNDS 24
 
 typedef unsigned long long u64_t;
+
+static const unsigned keccakf_rotc[24] = {
+    1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62,
+    18, 39, 61, 20, 44
+};
+
+static const unsigned keccakf_piln[24] = {
+    10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, 2, 20,
+    14, 22, 9, 6, 1
+};
 
 // Fully de-obfuscated 06/21/2021
 int
@@ -119,36 +130,38 @@ primes(int binary_size)
 }
 
 void
-main_loop(u64_t *v, u64_t *K, u64_t t, u64_t *O, u64_t *N, u64_t *w)
+keccakf(u64_t *v, u64_t *s, u64_t t, u64_t *w)
 {
-    for(u64_t i = 24; i--;) {
-        for(u64_t j = 0; j < 5; ++j) {
-            v[j] = K[j] ^ K[j + 5] ^ K[j + 10] ^ K[j + 15] ^ K[j + 20];
+    for(u64_t round = KECCAK_ROUNDS; round--;) {
+        /* Theta */
+        for(int i = 0; i < 5; ++i) {
+            v[i] = s[i] ^ s[i + 5] ^ s[i + 10] ^ s[i + 15] ^ s[i + 20];
         }
+
         for(u64_t j = 0; j < 5; ++j) {
             t = v[(j + 4) % 5] ^ (v[(j + 1) % 5] << 1 | v[(j + 1) % 5] >> 63);
             for(u64_t k = 0; k < 25; k += 5) {
-                K[j + k] ^= t;
+                s[j + k] ^= t;
             }
         }
-        t = K[1];
+        t = s[1];
         for (u64_t j = 0; j - 24; ++j) {
-            u64_t tmp_idx = O[j];
-            *v = K[tmp_idx];
-            K[tmp_idx] = t << N[j] | t >> (64 - N[j]);
+            u64_t tmp_idx = keccakf_piln[j];
+            *v = s[tmp_idx];
+            s[tmp_idx] = t << keccakf_rotc[j] | t >> (64 - keccakf_rotc[j]);
             t = *v;
         }
 
         for(u64_t j = 0; j < 25; j += 5) {
             for(u64_t k = 0; k < 5; ++k) {
-                v[k] = K[k + j];
+                v[k] = s[k + j];
             }
             for(u64_t k = 0; k < 5; ++k) {
-                K[k + j] ^= ~v[(k + 1) % 5] & v[(k + 2) % 5];
+                s[k + j] ^= ~v[(k + 1) % 5] & v[(k + 2) % 5];
             }
         }
 
-        K[0] ^= w[i];
+        s[0] ^= w[round];
     }
 }
 
@@ -180,12 +193,6 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // 224, 256, 384, 512
-    u64_t sha_output_size = atoi(argv[1]) / 8;
-
-    unsigned int _[810];
-    memset(_, 0, sizeof(unsigned int) * 810); // This memset is integral to SHA. WHY???
-
     // switch (determine_random_label_from_date())
     // {
     // case 0:
@@ -195,7 +202,14 @@ int main(int argc, char *argv[])
     // }
 
     // Arrays
-    u64_t N[25] = {1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62, 18, 39, 61, 20, 44};
+    unsigned int _[810];
+    memset(_, 0, sizeof(unsigned int) * 810); // This memset is integral to SHA. WHY???
+    UNUSED(_);
+    u64_t __[25] = {0};
+    UNUSED(__);
+    u64_t ___[25] = {0};
+    UNUSED(___);
+
     u64_t v[5] = {0};
     u64_t w[25] = {
         9223372039002292232ULL,
@@ -224,15 +238,17 @@ int main(int argc, char *argv[])
         1,
         9223372036854775808ULL,
     };
-    u64_t O[25] = {10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, 2, 20, 14, 22, 9, 6, 1};
 
     // Contains information need for SHA only!
     union ULL_Union {
-        u64_t K[25];
+        u64_t s[25];
         uint8_t checksum_bytes[1];
     } c;
     memset(&c, 0, sizeof(u64_t)*5);
 
+
+    // 224, 256, 384, 512
+    u64_t sha_output_size = atoi(argv[1]) / 8;
     const u64_t size_div_4 = sha_output_size / 4;
 
     u64_t F = 0;
@@ -247,19 +263,19 @@ int main(int argc, char *argv[])
             t |= (u64_t)binary_bytes[S] << 8 * S;
         }
 
-        c.K[F] ^= t;
+        c.s[F] ^= t;
 
         if (++F == 25 - size_div_4) {
-            main_loop(v, c.K, t, O, N, w);
+            keccakf(v, c.s, t, w);
             F = 0;
         }
 
         binary_bytes += 8;
     }
 
-    c.K[F] ^= 6;
-    c.K[24 - size_div_4] ^= w[24];
+    c.s[F] ^= 6;
+    c.s[24 - size_div_4] ^= w[24];
 
-    main_loop(v, c.K, t, O, N, w);
+    keccakf(v, c.s, t, w);
     return bytes_to_hex(c.checksum_bytes, sha_output_size);
 }
