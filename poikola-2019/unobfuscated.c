@@ -25,6 +25,48 @@ determine_random_label_from_date()
     ) % 3;
 }
 
+int
+fibonacci()
+{
+    // Iteratively build fibonnaci
+    u64_t last = 1;
+    u64_t last_last = 1;
+
+    for(u64_t i0 = 0; i0 < 93; ++i0) {
+        printf("%llx ", last);
+        u64_t tmp = last + last_last;
+        last = last_last;
+        last_last = tmp;
+    }
+
+    return puts("");
+}
+
+int
+virpiniemi(u64_t I, const unsigned char *f, u64_t T)
+{
+    // Cleaned up 06/21/2021
+    for (u64_t i0 = !I; i0 < T; ++i0) {
+        char result[2] = {48, 48, '\0'};
+
+        u64_t s_idx = 1;
+
+        for (u64_t i1 = f[i0]; i1 ^ 0; i1 >>= 4) { // Always runs twice
+            u64_t tmp_var = i1 & 15;
+            if (tmp_var < 10) {
+                result[s_idx] = tmp_var | 48;
+            }
+            else {
+                result[s_idx] = tmp_var + 87;
+            }
+            --s_idx;
+        }
+        printf("%s", result); // This prints 2 characters at a time
+    }
+
+    return puts("");
+}
+
 int main(int argc, char *argv[])
 {
     // argv[0] = executable
@@ -208,12 +250,11 @@ laajavuori:;
     switch (determine_random_label_from_date())
     {
     case 0:
-        goto vuokatti;
+        return fibonacci();
     case 1:
-        goto virpiniemi;
+        return virpiniemi(I, f, T);
     }
 
-ounasvaara:;
     // Cleaned up 06/21/2021
     // Generate all primes until (binary_size / 16)
     for (u64_t i0 = 2; i0 <= binary_size; ++i0) {
@@ -221,41 +262,5 @@ ounasvaara:;
             printf("%llu ", i0);
         }
     }
-    return puts("");
-
-virpiniemi:
-    // Cleaned up 06/21/2021
-    for (u64_t i0 = !I; i0 < T; ++i0) {
-        char result[2] = {48, 48, '\0'};
-
-        u64_t s_idx = 1;
-
-        for (u64_t i1 = f[i0]; i1 ^ 0; i1 >>= 4) { // Always runs twice
-            u64_t tmp_var = i1 & 15;
-            if (tmp_var < 10) {
-                result[s_idx] = tmp_var | 48;
-            }
-            else {
-                result[s_idx] = tmp_var + 87;
-            }
-            --s_idx;
-        }
-        printf("%s", result); // This prints 2 characters at a time
-    }
-
-    return puts("");
-
-vuokatti:;
-    // Iteratively build fibonnaci
-    u64_t last = 1;
-    u64_t last_last = 1;
-
-    for(u64_t i0 = 0; i0 < 93; ++i0) {
-        printf("%llx ", last);
-        u64_t tmp = last + last_last;
-        last = last_last;
-        last_last = tmp;
-    }
-
     return puts("");
 }
