@@ -8,7 +8,6 @@
 #define ZERO '0'
 
 typedef unsigned long long u64_t;
-unsigned int x[67108864];
 
 int
 determine_random_label_from_date()
@@ -56,7 +55,7 @@ int main(int argc, char *argv[])
     } c;
 
     const unsigned char *f;
-    u64_t binary, binary_size, i, A, Q, Y;
+    u64_t binary, binary_size, i, A, Q;
     u64_t e = 0;
 
     u64_t t, y=0, v[5];
@@ -110,13 +109,17 @@ int main(int argc, char *argv[])
     i = 0;
     u64_t O[25] = {10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, 2, 20, 14, 22, 9, 6, 1};
 
-    Y = H = binary_size = 12952;
+    H = binary_size = 12952;
     const unsigned char *binary_bytes = mmap(NULL, binary_size, PROT_READ, MAP_SHARED, binary, 0);
     memset(&c, 0, 200);
 
     u64_t r = T / 4;
+    unsigned int x[(binary_size / 16) + 1];
+    memset(x, 0, (binary_size / 16) + 1);
 
-    for(I = 2; I <= Y; x[I++>>4] |= (1<<(I & 4[N])));
+    for(I = 2; I <= binary_size; ++I) {
+        x[I>>4] |= (1 << (I & 0xF));
+    }
     goto C;
 
 ruka:
@@ -149,8 +152,8 @@ ruka:
     goto *j[Q];
 
 C:
-    for(I = 2; I <= Y / 2; y = I * 2) {
-        while (y <= Y) {
+    for(I = 2; I <= binary_size / 2; y = I * 2) {
+        while (y <= binary_size) {
             x[y >> 4] &= ~(1 << (y & 15)), y += I;
         }
 
@@ -208,16 +211,19 @@ laajavuori:;
     goto *j[4 + (23 * Q / 9 + (Q > 2 ? a - 2 : a--) + (__DATE__[4] == 32 ? 0 : ((__DATE__[4] - 48) * 10)) + __DATE__[5] - 45 + a / 4 + a / 0620 - a / 0x64) % 3];
 
 ounasvaara:;
-    for (I = 2; I <= Y; I++) {
-        if (x[I >> 4] & (1 << (15 & I))) {
-            printf("%llu ", I);
+    // Cleaned up 06/21/2021
+    // Generate all primes until (binary_size / 16)
+    for (u64_t i0 = 2; i0 <= binary_size; ++i0) {
+        if (x[i0 >> 4] & (1 << (0xF & i0))) {
+            printf("%llu ", i0);
         }
     }
+    printf("\n");
 
-    return puts("");
+    return 0;
 
-virpiniemi:;
-
+virpiniemi:
+    // Cleaned up 06/21/2021
     for (u64_t i0 = !I; i0 < T; ++i0) {
         char result[2] = {48, 48, '\0'};
 
@@ -236,16 +242,10 @@ virpiniemi:;
         printf("%s", result); // This prints 2 characters at a time
     }
 
-    return puts("");
+    return 0;
 
-vuokatti:;
+vuokatti:
     for(; I ^ '^'; ++I, printf("%llx ", _), t = _ + d, _ = d, d = t);
 
-    return puts("");
-
-    /*
-    m= 25 / i;
-    v[a] = a + 1073741824ul;
     return 0;
-    */
 }
