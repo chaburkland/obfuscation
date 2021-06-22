@@ -22,6 +22,35 @@ static const unsigned int keccakf_piln[24] = {
     14, 22, 9, 6, 1
 };
 
+static const u64_t keccakf_rndc[24] = {
+    9223372039002292232ULL,
+    2147483649,
+    9223372036854808704ULL,
+    9223372039002292353ULL,
+    9223372039002259466ULL,
+    32778,
+    9223372036854775936ULL,
+    9223372036854808578ULL,
+    9223372036854808579ULL,
+    9223372036854808713ULL,
+    9223372036854775947ULL,
+    2147516555,
+    2147483658,
+    2147516425,
+    136,
+    138,
+    9223372036854808585ULL,
+    9223372039002292353ULL,
+    2147483649,
+    32907,
+    9223372039002292224ULL,
+    9223372036854808714ULL,
+    32898,
+    1,
+    9223372036854775808ULL,
+};
+
+
 // Fully de-obfuscated 06/21/2021
 int
 determine_random_label_from_date()
@@ -136,7 +165,7 @@ sha3_rotl_64(u64_t x, unsigned int y)
 }
 
 void
-keccakf(u64_t *s, u64_t *w)
+keccakf(u64_t *s)
 {
     u64_t bc[5];
     u64_t t;
@@ -163,16 +192,17 @@ keccakf(u64_t *s, u64_t *w)
             t = bc[0];
         }
 
-        for(u64_t j = 0; j < 25; j += 5) {
-            for(u64_t k = 0; k < 5; ++k) {
-                bc[k] = s[k + j];
+        /* Chi */
+        for(int i = 0; i < 25; i += 5) {
+            for(int j = 0; j < 5; ++j) {
+                bc[j] = s[j + i];
             }
-            for(u64_t k = 0; k < 5; ++k) {
-                s[k + j] ^= ~bc[(k + 1) % 5] & bc[(k + 2) % 5];
+            for(int j = 0; j < 5; ++j) {
+                s[i + j] ^= ~bc[(j + 1) % 5] & bc[(j + 2) % 5];
             }
         }
 
-        s[0] ^= w[round];
+        s[0] ^= keccakf_rndc[round];
     }
 }
 
@@ -271,7 +301,7 @@ int main(int argc, char *argv[])
         c.s[F] ^= t;
 
         if (++F == 25 - size_div_4) {
-            keccakf(c.s, w);
+            keccakf(c.s);
             F = 0;
         }
 
@@ -281,6 +311,6 @@ int main(int argc, char *argv[])
     c.s[F] ^= 6;
     c.s[24 - size_div_4] ^= w[24];
 
-    keccakf(c.s, w);
+    keccakf(c.s);
     return bytes_to_hex(c.checksum_bytes, sha_output_size);
 }
