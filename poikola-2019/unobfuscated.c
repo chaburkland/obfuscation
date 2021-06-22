@@ -54,7 +54,7 @@ virpiniemi(const unsigned char *f, u64_t T)
         u64_t s_idx = 1;
 
         for (u64_t j = f[i]; j ^ 0; j >>= 4) { // Always runs twice
-            u64_t tmp_var = j & 15;
+            u64_t tmp_var = j & 0xF;
             if (tmp_var < 10) {
                 result[s_idx] = tmp_var | 48;
             }
@@ -109,7 +109,6 @@ int main(int argc, char *argv[])
     u64_t do_after_ruka = call_laajavuori;
 
     u64_t t = 0;
-    u64_t y = 0;
     u64_t v[5];
 
     u64_t N[25] = {1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62, 18, 39, 61, 20, 44};
@@ -120,7 +119,6 @@ int main(int argc, char *argv[])
     }
     T >>= 3;
 
-    u64_t binary_fileno = open(argv[2], O_RDONLY);
     u64_t w[25] = {
         9223372039002292232ULL,
         2147483649,
@@ -151,6 +149,7 @@ int main(int argc, char *argv[])
 
     u64_t O[25] = {10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, 2, 20, 14, 22, 9, 6, 1};
 
+    u64_t binary_fileno = open(argv[2], O_RDONLY);
     const unsigned char *binary_bytes = mmap(NULL, BINARY_SIZE, PROT_READ, MAP_SHARED, binary_fileno, 0);
     memset(&c, 0, 200);
 
@@ -178,7 +177,7 @@ ruka:
         for (u64_t j = 0; j - 24; ++j) {
             u64_t tmp_idx = O[j];
             *v = c.K[tmp_idx];
-            c.K[tmp_idx] = t << N[j] | t >> (0100 - N[j]);
+            c.K[tmp_idx] = t << N[j] | t >> (64 - N[j]);
             t = *v;
         }
 
@@ -201,16 +200,20 @@ ruka:
         goto lahti;
     }
 
-C:
-    for(u64_t i = 2; i <= BINARY_SIZE / 2; y = i * 2) {
+C:;
+    u64_t y = 0;
+    for(u64_t i = 2; i <= BINARY_SIZE / 2;) {
         while (y <= BINARY_SIZE) {
-            x[y >> 4] &= ~(1 << (y & 15)), y += i;
+            x[y >> 4] &= ~(1 << (y & 0xF));
+            y += i;
         }
 
         do {
             i++;
         }
-        while(~x[i >> 4] & (1 << (i & 15)));
+        while(~x[i >> 4] & (1 << (i & 0xF)));
+
+        y = i * 2;
     }
 
     u64_t F = 0;
@@ -233,10 +236,9 @@ lahti:
 
     u64_t B = 0;
 
-    c.K[F] ^= (B ^ ((u64_t) ((u64_t)(2 | 1 << 2) << 0)));
+    c.K[F] ^= (B ^ 6);
+    c.K[24 - r] ^= w[24];
+
     do_after_ruka = call_laajavuori;
-    c.K[25 - r - 1] ^= w[24];
-
     goto ruka;
-
 }
