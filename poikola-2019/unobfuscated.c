@@ -1,8 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <time.h>
+#include <stdint.h>
 
 # define BINARY_SIZE 12952
 #define UNUSED(x) (void)(x)
@@ -53,21 +55,21 @@ fibonacci()
 }
 
 int
-finish_checksum(const unsigned char *f, u64_t sha_output_size)
+bytes_to_hex(const uint8_t *checksum_bytes, u64_t sha_output_size)
 {
     // Cleaned up 06/21/2021
     for (u64_t i = 0; i < sha_output_size; ++i) {
-        char result[2] = {48, 48};
+        uint8_t result[2] = {48, 48};
 
         u64_t s_idx = 1;
 
-        for (u64_t j = f[i]; j ^ 0; j >>= 4) { // Always runs twice
+        for (u64_t j = checksum_bytes[i]; j ^ 0; j >>= 4) {
             u64_t tmp_var = j & 0xF;
-            if (tmp_var < 10) {
-                result[s_idx] = tmp_var | 48;
-            }
-            else {
-                result[s_idx] = tmp_var + 87;
+
+            if(tmp_var < 10) {
+                result[s_idx] = '0' + tmp_var;
+            } else {
+                result[s_idx] = 'a' + tmp_var - 10;
             }
             --s_idx;
         }
@@ -200,12 +202,12 @@ int main(int argc, char *argv[])
     // Contains information need for SHA only!
     union ULL_Union {
         u64_t K[25];
-        unsigned char E[1];
+        uint8_t E[1];
     } c;
 
     // Map binary bytes
     const u64_t binary_fileno = open(argv[2], O_RDONLY);
-    const unsigned char *binary_bytes = mmap(NULL, BINARY_SIZE, PROT_READ, MAP_SHARED, binary_fileno, 0);
+    const uint8_t *binary_bytes = mmap(NULL, BINARY_SIZE, PROT_READ, MAP_SHARED, binary_fileno, 0);
     memset(&c, 0, sizeof(u64_t)*5);
 
     const u64_t size_div_4 = sha_output_size / 4;
@@ -236,5 +238,5 @@ int main(int argc, char *argv[])
     c.K[24 - size_div_4] ^= w[24];
 
     main_loop(v, c.K, t, O, N, w);
-    return finish_checksum(c.E, sha_output_size);
+    return bytes_to_hex(c.E, sha_output_size);
 }
