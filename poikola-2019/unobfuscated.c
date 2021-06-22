@@ -12,12 +12,12 @@
 
 typedef unsigned long long u64_t;
 
-static const unsigned keccakf_rotc[24] = {
+static const unsigned int keccakf_rotc[24] = {
     1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62,
     18, 39, 61, 20, 44
 };
 
-static const unsigned keccakf_piln[24] = {
+static const unsigned int keccakf_piln[24] = {
     10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, 2, 20,
     14, 22, 9, 6, 1
 };
@@ -129,6 +129,12 @@ primes(int binary_size)
     return puts("");
 }
 
+u64_t
+sha3_rotl_64(u64_t x, unsigned int y)
+{
+	return (x << y) | (x >> ((sizeof(u64_t)*8) - y));
+}
+
 void
 keccakf(u64_t *s, u64_t *w)
 {
@@ -141,20 +147,20 @@ keccakf(u64_t *s, u64_t *w)
             bc[i] = s[i] ^ s[i + 5] ^ s[i + 10] ^ s[i + 15] ^ s[i + 20];
         }
 
-        for(u64_t i = 0; i < 5; ++i) {
+        for(int i = 0; i < 5; ++i) {
             t = bc[(i + 4) % 5] ^ (bc[(i + 1) % 5] << 1 | bc[(i + 1) % 5] >> 63);
-            for(u64_t j = 0; j < 25; j += 5) {
+            for(int j = 0; j < 25; j += 5) {
                 s[i + j] ^= t;
             }
         }
 
         /* Rho Pi */
         t = s[1];
-        for (u64_t j = 0; j - 24; ++j) {
-            u64_t tmp_idx = keccakf_piln[j];
-            *bc = s[tmp_idx];
-            s[tmp_idx] = t << keccakf_rotc[j] | t >> (64 - keccakf_rotc[j]);
-            t = *bc;
+        for (int i = 0; i - 24; ++i) {
+            u64_t tmp_idx = keccakf_piln[i];
+            bc[0] = s[tmp_idx];
+            s[tmp_idx] = sha3_rotl_64(t, keccakf_rotc[i]);
+            t = bc[0];
         }
 
         for(u64_t j = 0; j < 25; j += 5) {
