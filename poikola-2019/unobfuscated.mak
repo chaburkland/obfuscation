@@ -4,8 +4,7 @@ SHELL= /bin/bash
 X11_LIBDIR= /opt/X11/lib
 X11_INCDIR= /opt/X11/include
 CWARN= -Wall -Wextra -pedantic ${CSILENCE}
-CSILENCE= -Wno-gnu-label-as-value -Wno-sign-compare -Wno-unsequenced \
-    -Wno-dollar-in-identifier-extension -Wno-sometimes-uninitialized
+CSILENCE= -Wno-sign-compare -Wsequence-point
 CSTD= -std=c11
 ARCH=
 CDEFINE=

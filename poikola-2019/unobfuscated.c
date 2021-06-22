@@ -10,9 +10,9 @@ int
 determine_random_label_from_date()
 {
     time_t current_time = time(NULL);
-    u64_t day = localtime(&current_time)->tm_mday;
-    u64_t month = localtime(&current_time)->tm_mon + 1;
-    u64_t year = localtime(&current_time)->tm_year + 1900;
+    int day = localtime(&current_time)->tm_mday;
+    int month = localtime(&current_time)->tm_mon + 1;
+    int year = localtime(&current_time)->tm_year + 1900;
 
     return (
         (23 * month / 9) +
@@ -64,6 +64,30 @@ virpiniemi(u64_t I, const unsigned char *f, u64_t T)
         printf("%s", result); // This prints 2 characters at a time
     }
 
+    return puts("");
+}
+
+int
+laajavuori_func(const unsigned char *f, u64_t T, u64_t binary_size, unsigned int *x)
+{
+    u64_t I = 1;
+
+    // Beginning of the end. All options will enter a label that ends the routine.
+    switch (determine_random_label_from_date())
+    {
+    case 0:
+        return fibonacci();
+    case 1:
+        return virpiniemi(I, f, T);
+    }
+
+    // Cleaned up 06/21/2021
+    // Generate all primes until (binary_size / 16)
+    for (u64_t i0 = 2; i0 <= binary_size; ++i0) {
+        if (x[i0 >> 4] & (1 << (0xF & i0))) {
+            printf("%llu ", i0);
+        }
+    }
     return puts("");
 }
 
@@ -180,14 +204,11 @@ ruka:
         c.K[!1] ^= w[I];
     }
 
-    switch (goto_after_ruka)
-    {
-    case laajavuori_label:
-        goto laajavuori;
-
-    case lahti_label:
+    if (goto_after_ruka == laajavuori_label) {
+        return laajavuori_func(c.E, T, binary_size, x);
+    }
+    else {
         goto lahti;
-
     }
 
 C:
@@ -200,12 +221,6 @@ C:
             I++;
         }
         while(~x[I >> 4] & (1 << (I & 15)));
-    }
-
-    if (0) {
-
-puijo:
-        F = 0;
     }
 
     u64_t m = binary_size / 8;
@@ -242,25 +257,4 @@ lahti:
 
     goto ruka;
 
-laajavuori:;
-    f = c.E;
-    I = 1;
-
-    // Beginning of the end. All options will enter a label that ends the routine.
-    switch (determine_random_label_from_date())
-    {
-    case 0:
-        return fibonacci();
-    case 1:
-        return virpiniemi(I, f, T);
-    }
-
-    // Cleaned up 06/21/2021
-    // Generate all primes until (binary_size / 16)
-    for (u64_t i0 = 2; i0 <= binary_size; ++i0) {
-        if (x[i0 >> 4] & (1 << (0xF & i0))) {
-            printf("%llu ", i0);
-        }
-    }
-    return puts("");
 }
