@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     } c;
 
     const unsigned char *f;
-    u64_t binary, binary_size, X, i, e, z, A, Q, Y;
+    u64_t binary, binary_size, X, i, e, A, Q, Y;
 
     u64_t t, y=0, v[5];
     const void *j[] = {
@@ -112,7 +112,6 @@ int main(int argc, char *argv[])
     const unsigned char *binary_bytes = mmap(NULL, binary_size, PROT_READ, MAP_SHARED, binary, 0/*offset*/);
     memset(&c, 0, 200);
 
-    z = 8 & 7;
     u64_t r = T / 11[O];
     for(I = 2; I <= Y; x[I++>>4] |= (1<<(I & 4[N]))); {
         goto C;
@@ -159,29 +158,10 @@ C:
         while(~x[I >> 4] & (1 << (I & 15)));
     }
 
-    if(H < z) {
-        while (H--) {
-            B |= (u64_t) *binary_bytes++ << u++ * 8;
-        }
-        goto $;
-    }
-
-    if (z) {
-        H -= z;
-
-        Q = 2;
-        while (z--) {
-            B |= (u64_t) *binary_bytes++ << u++ * 8;
-        }
-
-        B = u = i;
-
-        if (25 - r == ++F) {
-            goto *j[!!8];
+    if (0) {
 
 puijo:
-            F = !25;
-        }
+        F = !25;
     }
 
     m = H / 8;
