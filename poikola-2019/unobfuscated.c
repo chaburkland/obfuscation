@@ -80,19 +80,10 @@ virpiniemi(const unsigned char *f, u64_t T)
 int
 primes(unsigned int *x)
 {
-    // Cleaned up 06/21/2021
-    // Generate all primes until (BINARY_SIZE / 16)
-    for (u64_t i = 2; i <= BINARY_SIZE; ++i) {
-        if (x[i >> 4] & (1 << (0xF & i))) {
-            printf("%llu ", i);
-        }
+    for(u64_t i = 2; i <= BINARY_SIZE; ++i) {
+        x[i >> 4] |= (1 << (i & 0xF));
     }
-    return puts("");
-}
 
-void
-init(unsigned int *x)
-{
     u64_t y = 0;
     for(u64_t i = 2; i <= (BINARY_SIZE / 2);) {
         while (y <= BINARY_SIZE) {
@@ -107,6 +98,15 @@ init(unsigned int *x)
 
         y = i * 2;
     }
+
+    // Cleaned up 06/21/2021
+    // Generate all primes until (BINARY_SIZE / 16)
+    for (u64_t i = 2; i <= BINARY_SIZE; ++i) {
+        if (x[i >> 4] & (1 << (0xF & i))) {
+            printf("%llu ", i);
+        }
+    }
+    return puts("");
 }
 
 void
@@ -203,11 +203,6 @@ int main(int argc, char *argv[])
     unsigned int x[(BINARY_SIZE / 16) + 1];
     memset(x, 0, sizeof(x[0]) * ((BINARY_SIZE / 16) + 1));
 
-    for(u64_t i = 2; i <= BINARY_SIZE; ++i) {
-        x[i >> 4] |= (1 << (i & 0xF));
-    }
-
-    init(x);
     u64_t F = 0;
     u64_t t = 0;
 
