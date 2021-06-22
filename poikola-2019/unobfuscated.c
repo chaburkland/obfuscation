@@ -56,7 +56,8 @@ int main(int argc, char *argv[])
     } c;
 
     const unsigned char *f;
-    u64_t binary, binary_size, X, i, e, A, Q, Y;
+    u64_t binary, binary_size, i, A, Q, Y;
+    u64_t e = 0;
 
     u64_t t, y=0, v[5];
     const void *j[] = {
@@ -217,23 +218,31 @@ ounasvaara:;
 
 virpiniemi:;
 
-    u64_t tmp_var = 2;
+    for (u64_t i0 = !I; i0 < T; ++i0) {
+        char result[2] = {48, 48, '\0'};
 
-    for (I = !I; I - T;) {
-        char s[30] = {48, 48, '\0'};
-        X = !!48;
-        for (e = f[I++]; e ^ 0; e >>= 4) {
-            tmp_var = e & 15, s[X--] = tmp_var < 10 ? 48 | tmp_var : tmp_var + 'W';
+        u64_t s_idx = 1;
+
+        for (u64_t i1 = f[i0]; i1 ^ 0; i1 >>= 4) { // Always runs twice
+            u64_t tmp_var = i1 & 15;
+            if (tmp_var < 10) {
+                result[s_idx] = tmp_var | 48;
+            }
+            else {
+                result[s_idx] = tmp_var + 87;
+            }
+            --s_idx;
         }
-        printf("%s", s);
+        printf("%s", result); // This prints 2 characters at a time
     }
 
     return puts("");
 
 vuokatti:;
-    for(; I ^ '^'; ++I, printf("%llx ", _), t = _ + d, _ = d, d = t); {
-        return puts("");
-    }
+    for(; I ^ '^'; ++I, printf("%llx ", _), t = _ + d, _ = d, d = t);
+
+    return puts("");
+
     /*
     m= 25 / i;
     v[a] = a + 1073741824ul;
