@@ -145,19 +145,10 @@ main_loop(u64_t *v, u64_t *K, u64_t t, u64_t *O, u64_t *N, u64_t *w)
 
 int main(int argc, char *argv[])
 {
-    UNUSED(argc);
     // argv[0] = executable
     // argv[1] = some number
     // argv[2] = compiled_binary
-    union ULL_Union {
-        u64_t K[25];
-        unsigned char E[1];
-    } c;
-
-    u64_t t = 0;
-    u64_t v[5];
-
-    u64_t N[25] = {1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62, 18, 39, 61, 20, 44};
+    UNUSED(argc);
 
     u64_t T = 0;
     for(u64_t i = 0; argv[1][i]; i++) {
@@ -165,6 +156,9 @@ int main(int argc, char *argv[])
     }
     T >>= 3;
 
+    // Arrays
+    u64_t N[25] = {1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62, 18, 39, 61, 20, 44};
+    u64_t v[5] = {0};
     u64_t w[25] = {
         9223372039002292232ULL,
         2147483649,
@@ -192,14 +186,20 @@ int main(int argc, char *argv[])
         1,
         9223372036854775808ULL,
     };
-
     u64_t O[25] = {10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, 2, 20, 14, 22, 9, 6, 1};
 
-    u64_t binary_fileno = open(argv[2], O_RDONLY);
+    union ULL_Union {
+        u64_t K[25];
+        unsigned char E[1];
+    } c;
+
+    // Map binary bytes
+    const u64_t binary_fileno = open(argv[2], O_RDONLY);
     const unsigned char *binary_bytes = mmap(NULL, BINARY_SIZE, PROT_READ, MAP_SHARED, binary_fileno, 0);
     memset(&c, 0, sizeof(u64_t)*5);
 
-    u64_t r = T / 4;
+    // Init x
+    const u64_t T_DIV_4 = T / 4;
     unsigned int x[(BINARY_SIZE / 16) + 1];
     memset(x, 0, sizeof(x[0]) * ((BINARY_SIZE / 16) + 1));
 
@@ -209,6 +209,7 @@ int main(int argc, char *argv[])
 
     init(x);
     u64_t F = 0;
+    u64_t t = 0;
 
     for (u64_t i = 0; i < (BINARY_SIZE / 8); ++i) {
         u64_t S = (u64_t)-1;
@@ -221,16 +222,17 @@ int main(int argc, char *argv[])
 
         c.K[F] ^= t;
 
-        if (++F == 25 - r) {
+        // Run once every 25 iterations
+        if (++F == 25 - T_DIV_4) {
             main_loop(v, c.K, t, O, N, w);
-            F = !r;
+            F = 0;
         }
 
         binary_bytes += 8;
     }
 
     c.K[F] ^= 6;
-    c.K[24 - r] ^= w[24];
+    c.K[24 - T_DIV_4] ^= w[24];
 
     main_loop(v, c.K, t, O, N, w);
 
