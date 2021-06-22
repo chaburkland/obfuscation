@@ -11,6 +11,7 @@
 
 typedef unsigned long long u64_t;
 
+// Fully de-obfuscated 06/21/2021
 int
 determine_random_label_from_date()
 {
@@ -37,6 +38,7 @@ determine_random_label_from_date()
     ) % 3;
 }
 
+// Fully de-obfuscated 06/21/2021
 int
 fibonacci()
 {
@@ -54,24 +56,25 @@ fibonacci()
     return puts("");
 }
 
+// Fully de-obfuscated 06/22/2021
 int
 bytes_to_hex(const uint8_t *checksum_bytes, u64_t sha_output_size)
 {
-    // Cleaned up 06/21/2021
     for (u64_t i = 0; i < sha_output_size; ++i) {
-        uint8_t result[2] = {48, 48};
+        uint8_t result[2] = "00";
+        uint8_t byte = checksum_bytes[i];
+        size_t idx = 1;
 
-        u64_t s_idx = 1;
+        while (byte) {
+            u64_t half_byte = byte & 0xF;
 
-        for (u64_t j = checksum_bytes[i]; j ^ 0; j >>= 4) {
-            u64_t tmp_var = j & 0xF;
-
-            if(tmp_var < 10) {
-                result[s_idx] = '0' + tmp_var;
+            if(half_byte < 10) {
+                result[idx] = '0' + half_byte;
             } else {
-                result[s_idx] = 'a' + tmp_var - 10;
+                result[idx] = 'a' + half_byte - 10;
             }
-            --s_idx;
+            --idx;
+            byte >>= 4;
         }
         printf("%s", result); // This prints 2 characters at a time
     }
@@ -202,7 +205,7 @@ int main(int argc, char *argv[])
     // Contains information need for SHA only!
     union ULL_Union {
         u64_t K[25];
-        uint8_t E[1];
+        uint8_t checksum_bytes[1];
     } c;
 
     // Map binary bytes
@@ -238,5 +241,5 @@ int main(int argc, char *argv[])
     c.K[24 - size_div_4] ^= w[24];
 
     main_loop(v, c.K, t, O, N, w);
-    return bytes_to_hex(c.E, sha_output_size);
+    return bytes_to_hex(c.checksum_bytes, sha_output_size);
 }
