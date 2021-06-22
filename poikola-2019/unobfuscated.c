@@ -222,18 +222,7 @@ int main(int argc, char *argv[])
     for(u64_t i = 2; i <= BINARY_SIZE; ++i) {
         x[i >> 4] |= (1 << (i & 0xF));
     }
-    goto C;
 
-ruka:
-    ruka_main_loop(v, c.K, t, O, N, w);
-
-    if (do_after_ruka == call_laajavuori) {
-        return laajavuori(c.E, T, x);
-    }
-
-    goto lahti;
-
-C:;
     init(x);
     u64_t F = 0;
 
@@ -247,8 +236,7 @@ C:;
         c.K[F] ^= t;
         if (++F == 25 - r) {
             do_after_ruka = goto_lahti_label;
-            goto ruka;
-lahti:
+            ruka_main_loop(v, c.K, t, O, N, w);
             F = !r;
         }
         binary_bytes += 8;
@@ -259,6 +247,6 @@ lahti:
     c.K[F] ^= (B ^ 6);
     c.K[24 - r] ^= w[24];
 
-    do_after_ruka = call_laajavuori;
-    goto ruka;
+    ruka_main_loop(v, c.K, t, O, N, w);
+    return laajavuori(c.E, T, x);
 }
