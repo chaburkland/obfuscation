@@ -4,6 +4,8 @@
 #include <sys/mman.h>
 #include <time.h>
 
+# define BINARY_SIZE 12952
+
 typedef unsigned long long u64_t;
 
 int
@@ -43,10 +45,10 @@ fibonacci()
 }
 
 int
-virpiniemi(u64_t I, const unsigned char *f, u64_t T)
+virpiniemi(const unsigned char *f, u64_t T)
 {
     // Cleaned up 06/21/2021
-    for (u64_t i0 = !I; i0 < T; ++i0) {
+    for (u64_t i0 = 0; i0 < T; ++i0) {
         char result[2] = {48, 48, '\0'};
 
         u64_t s_idx = 1;
@@ -68,22 +70,20 @@ virpiniemi(u64_t I, const unsigned char *f, u64_t T)
 }
 
 int
-laajavuori_func(const unsigned char *f, u64_t T, u64_t binary_size, unsigned int *x)
+laajavuori(const unsigned char *f, u64_t T, unsigned int *x)
 {
-    u64_t I = 1;
-
     // Beginning of the end. All options will enter a label that ends the routine.
     switch (determine_random_label_from_date())
     {
     case 0:
         return fibonacci();
     case 1:
-        return virpiniemi(I, f, T);
+        return virpiniemi(f, T);
     }
 
     // Cleaned up 06/21/2021
-    // Generate all primes until (binary_size / 16)
-    for (u64_t i0 = 2; i0 <= binary_size; ++i0) {
+    // Generate all primes until (BINARY_SIZE / 16)
+    for (u64_t i0 = 2; i0 <= BINARY_SIZE; ++i0) {
         if (x[i0 >> 4] & (1 << (0xF & i0))) {
             printf("%llu ", i0);
         }
@@ -96,7 +96,6 @@ int main(int argc, char *argv[])
     // argv[0] = executable
     // argv[1] = some number
     // argv[2] = compiled_binary
-    u64_t I = 0;
     u64_t F = 0;
     u64_t u = 0;
     u64_t a = 0;
@@ -107,11 +106,11 @@ int main(int argc, char *argv[])
     } c;
 
     enum LabelEnum {
-        laajavuori_label = 0,
-        lahti_label = 1,
+        call_laajavuori = 0,
+        goto_lahti_label = 1,
     };
 
-    u64_t goto_after_ruka = laajavuori_label;
+    u64_t do_after_ruka = call_laajavuori;
 
     const unsigned char *f;
     u64_t e = 0;
@@ -160,21 +159,20 @@ int main(int argc, char *argv[])
     u64_t i = 0;
     u64_t O[25] = {10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, 2, 20, 14, 22, 9, 6, 1};
 
-    u64_t binary_size = 12952;
-    const unsigned char *binary_bytes = mmap(NULL, binary_size, PROT_READ, MAP_SHARED, binary_fileno, 0);
+    const unsigned char *binary_bytes = mmap(NULL, BINARY_SIZE, PROT_READ, MAP_SHARED, binary_fileno, 0);
     memset(&c, 0, 200);
 
     u64_t r = T / 4;
-    unsigned int x[(binary_size / 16) + 1];
-    memset(x, 0, (binary_size / 16) + 1);
+    unsigned int x[(BINARY_SIZE / 16) + 1];
+    memset(x, 0, (BINARY_SIZE / 16) + 1);
 
-    for(I = 2; I <= binary_size; ++I) {
-        x[I>>4] |= (1 << (I & 0xF));
+    for(u64_t i0 = 2; i0 <= BINARY_SIZE; ++i0) {
+        x[i0 >> 4] |= (1 << (i0 & 0xF));
     }
     goto C;
 
 ruka:
-    for(I = 8*3; I--;) {
+    for(u64_t i0 = 24; i0--;) {
         for(a=0;a<5;a++) {
             v[a] = c.K[a] ^ c.K[a + 5] ^ c.K[a + 10] ^ c.K[a + 15] ^ c.K[a + 20];
         }
@@ -201,30 +199,30 @@ ruka:
             }
         }
 
-        c.K[!1] ^= w[I];
+        c.K[!1] ^= w[i0];
     }
 
-    if (goto_after_ruka == laajavuori_label) {
-        return laajavuori_func(c.E, T, binary_size, x);
+    if (do_after_ruka == call_laajavuori) {
+        return laajavuori(c.E, T, x);
     }
     else {
         goto lahti;
     }
 
 C:
-    for(I = 2; I <= binary_size / 2; y = I * 2) {
-        while (y <= binary_size) {
-            x[y >> 4] &= ~(1 << (y & 15)), y += I;
+    for(u64_t i0 = 2; i0 <= BINARY_SIZE / 2; y = i0 * 2) {
+        while (y <= BINARY_SIZE) {
+            x[y >> 4] &= ~(1 << (y & 15)), y += i0;
         }
 
         do {
-            I++;
+            i0++;
         }
-        while(~x[I >> 4] & (1 << (I & 15)));
+        while(~x[i0 >> 4] & (1 << (i0 & 15)));
     }
 
-    u64_t m = binary_size / 8;
-    e = binary_size - m * 8;
+    u64_t m = BINARY_SIZE / 8;
+    e = BINARY_SIZE - m * 8;
 
     for (; i < m; binary_bytes += 8) {
         i++;
@@ -239,7 +237,7 @@ C:
             | (u64_t) binary_bytes[++S] << 8 * S;
         c.K[F] ^= t;
         if (++F == 25 - r) {
-            goto_after_ruka = lahti_label;
+            do_after_ruka = goto_lahti_label;
             goto ruka;
 lahti:
             F = !r;
@@ -252,7 +250,7 @@ lahti:
     }
 
     c.K[F] ^= (B ^ ((u64_t) ((u64_t)(2 | 1 << 2) << u * 8)));
-    goto_after_ruka = laajavuori_label;
+    do_after_ruka = call_laajavuori;
     c.K[25 - r - 1] ^= w[24];
 
     goto ruka;
