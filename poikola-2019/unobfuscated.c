@@ -10,7 +10,6 @@
 typedef unsigned long long u64_t;
 unsigned int x[67108864];
 
-u64_t T;
 u64_t B;
 
 int
@@ -71,6 +70,7 @@ int main(int argc, char *argv[])
 
     u64_t N[25] = {1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62, 18, 39, 61, 20, 44};
 
+    u64_t T = 0;
     for(u64_t i0 = 0; argv[1][i0]; i0++) {
         T = T * 10 + argv[1][i0] - 48;
     }
@@ -109,13 +109,13 @@ int main(int argc, char *argv[])
     u64_t O[25] = {10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, 2, 20, 14, 22, 9, 6, 1};
 
     Y = H = binary_size = 12952;
-    const unsigned char *binary_bytes = mmap(NULL, binary_size, PROT_READ, MAP_SHARED, binary, 0/*offset*/);
+    const unsigned char *binary_bytes = mmap(NULL, binary_size, PROT_READ, MAP_SHARED, binary, 0);
     memset(&c, 0, 200);
 
-    u64_t r = T / 11[O];
-    for(I = 2; I <= Y; x[I++>>4] |= (1<<(I & 4[N]))); {
-        goto C;
-    }
+    u64_t r = T / 4;
+
+    for(I = 2; I <= Y; x[I++>>4] |= (1<<(I & 4[N])));
+    goto C;
 
 ruka:
     for(I = 8*3; I--;) {
@@ -149,7 +149,7 @@ ruka:
 C:
     for(I = 2; I <= Y / 2; y = I * 2) {
         while (y <= Y) {
-            x[y >> 4] &= ~(1 << (y & O[12])), y += I;
+            x[y >> 4] &= ~(1 << (y & 15)), y += I;
         }
 
         do {
