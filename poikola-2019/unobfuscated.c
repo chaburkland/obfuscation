@@ -206,12 +206,6 @@ int main(int argc, char *argv[])
     unsigned int _[810];
     memset(_, 0, sizeof(unsigned int) * 810); // This memset is integral to SHA. WHY???
     UNUSED(_);
-    u64_t __[25] = {0};
-    UNUSED(__);
-    u64_t ___[25] = {0};
-    UNUSED(___);
-    u64_t ____[5] = {0};
-    UNUSED(____);
 
     u64_t w[25] = {
         9223372039002292232ULL,
