@@ -53,10 +53,45 @@ fibonacci()
 }
 
 int
-virpiniemi(const unsigned char *f, u64_t T)
+primes()
+{
+    // VERY fast prime implementation
+    // Generate all primes until (BINARY_SIZE / 16)
+    unsigned int x[(BINARY_SIZE / 16) + 1];
+    memset(x, 0, sizeof(x[0]) * ((BINARY_SIZE / 16) + 1));
+
+    for(u64_t i = 2; i <= BINARY_SIZE; ++i) {
+        x[i >> 4] |= (1 << (i & 0xF));
+    }
+
+    u64_t y = 0;
+    for(u64_t i = 2; i <= (BINARY_SIZE / 2);) {
+        while (y <= BINARY_SIZE) {
+            x[y >> 4] &= ~(1 << (y & 0xF));
+            y += i;
+        }
+
+        do {
+            i++;
+        }
+        while(~x[i >> 4] & (1 << (i & 0xF)));
+
+        y = i * 2;
+    }
+
+    for (u64_t i = 2; i <= BINARY_SIZE; ++i) {
+        if (x[i >> 4] & (1 << (0xF & i))) {
+            printf("%llu ", i);
+        }
+    }
+    return puts("");
+}
+
+int
+finish_checksum(const unsigned char *f, u64_t sha_output_size)
 {
     // Cleaned up 06/21/2021
-    for (u64_t i = 0; i < T; ++i) {
+    for (u64_t i = 0; i < sha_output_size; ++i) {
         char result[2] = {48, 48};
 
         u64_t s_idx = 1;
@@ -75,38 +110,6 @@ virpiniemi(const unsigned char *f, u64_t T)
     }
 
     return puts("");
-}
-
-int
-primes(unsigned int *x)
-{
-    // Cleaned up 06/21/2021
-    // Generate all primes until (BINARY_SIZE / 16)
-    for (u64_t i = 2; i <= BINARY_SIZE; ++i) {
-        if (x[i >> 4] & (1 << (0xF & i))) {
-            printf("%llu ", i);
-        }
-    }
-    return puts("");
-}
-
-void
-init(unsigned int *x)
-{
-    u64_t y = 0;
-    for(u64_t i = 2; i <= (BINARY_SIZE / 2);) {
-        while (y <= BINARY_SIZE) {
-            x[y >> 4] &= ~(1 << (y & 0xF));
-            y += i;
-        }
-
-        do {
-            i++;
-        }
-        while(~x[i >> 4] & (1 << (i & 0xF)));
-
-        y = i * 2;
-    }
 }
 
 void
@@ -145,16 +148,25 @@ main_loop(u64_t *v, u64_t *K, u64_t t, u64_t *O, u64_t *N, u64_t *w)
 
 int main(int argc, char *argv[])
 {
-    // argv[0] = executable
-    // argv[1] = some number
-    // argv[2] = compiled_binary
+    /*
+        argv[0] = executable
+        argv[1] = some number
+        argv[2] = compiled_binary
+    */
     UNUSED(argc);
 
-    u64_t T = 0;
-    for(u64_t i = 0; argv[1][i]; i++) {
-        T = T * 10 + argv[1][i] - 48;
+    switch (determine_random_label_from_date())
+    {
+    case 0:
+        return fibonacci();
+    case 2:
+        return primes();
     }
-    T >>= 3;
+
+    // Implement SHA3-{sha_output_size} checksum
+
+    // 224, 256, 384, 512
+    u64_t sha_output_size = atoi(argv[1]) / 8;
 
     // Arrays
     u64_t N[25] = {1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62, 18, 39, 61, 20, 44};
@@ -188,6 +200,7 @@ int main(int argc, char *argv[])
     };
     u64_t O[25] = {10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, 2, 20, 14, 22, 9, 6, 1};
 
+    // Contains information need for SHA only!
     union ULL_Union {
         u64_t K[25];
         unsigned char E[1];
@@ -198,16 +211,8 @@ int main(int argc, char *argv[])
     const unsigned char *binary_bytes = mmap(NULL, BINARY_SIZE, PROT_READ, MAP_SHARED, binary_fileno, 0);
     memset(&c, 0, sizeof(u64_t)*5);
 
-    // Init x
-    const u64_t T_DIV_4 = T / 4;
-    unsigned int x[(BINARY_SIZE / 16) + 1];
-    memset(x, 0, sizeof(x[0]) * ((BINARY_SIZE / 16) + 1));
+    const u64_t size_div_4 = sha_output_size / 4;
 
-    for(u64_t i = 2; i <= BINARY_SIZE; ++i) {
-        x[i >> 4] |= (1 << (i & 0xF));
-    }
-
-    init(x);
     u64_t F = 0;
     u64_t t = 0;
 
@@ -222,8 +227,7 @@ int main(int argc, char *argv[])
 
         c.K[F] ^= t;
 
-        // Run once every 25 iterations
-        if (++F == 25 - T_DIV_4) {
+        if (++F == 25 - size_div_4) {
             main_loop(v, c.K, t, O, N, w);
             F = 0;
         }
@@ -232,16 +236,9 @@ int main(int argc, char *argv[])
     }
 
     c.K[F] ^= 6;
-    c.K[24 - T_DIV_4] ^= w[24];
+    c.K[24 - size_div_4] ^= w[24];
 
     main_loop(v, c.K, t, O, N, w);
 
-    switch (determine_random_label_from_date())
-    {
-    case 0:
-        return fibonacci();
-    case 1:
-        return virpiniemi(c.E, T);
-    }
-    return primes(x);
+    return finish_checksum(c.E, sha_output_size);
 }
