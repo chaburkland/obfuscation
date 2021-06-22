@@ -130,9 +130,11 @@ primes(int binary_size)
 }
 
 void
-keccakf(u64_t *s, u64_t t, u64_t *w)
+keccakf(u64_t *s, u64_t *w)
 {
     u64_t bc[5];
+    u64_t t;
+
     for(u64_t round = KECCAK_ROUNDS; round--;) {
         /* Theta */
         for(int i = 0; i < 5; ++i) {
@@ -145,6 +147,8 @@ keccakf(u64_t *s, u64_t t, u64_t *w)
                 s[i + j] ^= t;
             }
         }
+
+        /* Rho Pi */
         t = s[1];
         for (u64_t j = 0; j - 24; ++j) {
             u64_t tmp_idx = keccakf_piln[j];
@@ -261,7 +265,7 @@ int main(int argc, char *argv[])
         c.s[F] ^= t;
 
         if (++F == 25 - size_div_4) {
-            keccakf(c.s, t, w);
+            keccakf(c.s, w);
             F = 0;
         }
 
@@ -271,6 +275,6 @@ int main(int argc, char *argv[])
     c.s[F] ^= 6;
     c.s[24 - size_div_4] ^= w[24];
 
-    keccakf(c.s, t, w);
+    keccakf(c.s, w);
     return bytes_to_hex(c.checksum_bytes, sha_output_size);
 }
