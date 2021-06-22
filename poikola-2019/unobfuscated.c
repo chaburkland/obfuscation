@@ -119,7 +119,7 @@ init(unsigned int *x)
 }
 
 void
-ruka_main_loop(u64_t *v, u64_t *K, u64_t t, u64_t *O, u64_t *N, u64_t *w)
+main_loop(u64_t *v, u64_t *K, u64_t t, u64_t *O, u64_t *N, u64_t *w)
 {
     for(u64_t i = 24; i--;) {
         for(u64_t j = 0; j < 5; ++j) {
@@ -162,13 +162,6 @@ int main(int argc, char *argv[])
         u64_t K[25];
         unsigned char E[1];
     } c;
-
-    enum LabelEnum {
-        call_laajavuori = 0,
-        goto_lahti_label = 1,
-    };
-
-    u64_t do_after_ruka = call_laajavuori;
 
     u64_t t = 0;
     u64_t v[5];
@@ -229,24 +222,25 @@ int main(int argc, char *argv[])
     for (u64_t i = 0; i < (BINARY_SIZE / 8); ++i) {
         u64_t S = (u64_t)-1;
         t = 0;
+
         for (u64_t j = 0; j < 8; ++j) {
             ++S;
             t |= (u64_t)binary_bytes[S] << 8 * S;
         }
+
         c.K[F] ^= t;
+
         if (++F == 25 - r) {
-            do_after_ruka = goto_lahti_label;
-            ruka_main_loop(v, c.K, t, O, N, w);
+            main_loop(v, c.K, t, O, N, w);
             F = !r;
         }
+
         binary_bytes += 8;
     }
 
-    u64_t B = 0;
-
-    c.K[F] ^= (B ^ 6);
+    c.K[F] ^= 6;
     c.K[24 - r] ^= w[24];
 
-    ruka_main_loop(v, c.K, t, O, N, w);
+    main_loop(v, c.K, t, O, N, w);
     return laajavuori(c.E, T, x);
 }
