@@ -77,6 +77,19 @@ virpiniemi(const unsigned char *f, u64_t T)
     return puts("");
 }
 
+int
+primes(unsigned int *x)
+{
+    // Cleaned up 06/21/2021
+    // Generate all primes until (BINARY_SIZE / 16)
+    for (u64_t i = 2; i <= BINARY_SIZE; ++i) {
+        if (x[i >> 4] & (1 << (0xF & i))) {
+            printf("%llu ", i);
+        }
+    }
+    return puts("");
+}
+
 void
 init(unsigned int *x)
 {
@@ -228,12 +241,5 @@ int main(int argc, char *argv[])
     case 1:
         return virpiniemi(c.E, T);
     }
-    // Cleaned up 06/21/2021
-    // Generate all primes until (BINARY_SIZE / 16)
-    for (u64_t i = 2; i <= BINARY_SIZE; ++i) {
-        if (x[i >> 4] & (1 << (0xF & i))) {
-            printf("%llu ", i);
-        }
-    }
-    return puts("");
+    return primes(x);
 }
