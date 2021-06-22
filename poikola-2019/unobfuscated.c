@@ -7,7 +7,6 @@
 #include <stdint.h>
 #include <sys/stat.h>
 
-# define BINARY_SIZE 12952
 #define UNUSED(x) (void)(x)
 
 typedef unsigned long long u64_t;
@@ -84,9 +83,11 @@ bytes_to_hex(const uint8_t *checksum_bytes, u64_t sha_output_size)
 }
 
 int
-primes(unsigned int *x, int binary_size)
+primes(int binary_size)
 {
     // VERY fast prime implementation
+    unsigned int *x = calloc((binary_size / 16) + 1, sizeof(unsigned int));
+
     for(u64_t i = 2; i <= binary_size; ++i) {
         x[i >> 4] |= (1 << (i & 0xF));
     }
@@ -113,6 +114,7 @@ primes(unsigned int *x, int binary_size)
             printf("%llu ", i);
         }
     }
+    free(x);
     return puts("");
 }
 
@@ -181,15 +183,16 @@ int main(int argc, char *argv[])
     // 224, 256, 384, 512
     u64_t sha_output_size = atoi(argv[1]) / 8;
 
-    unsigned int x[(BINARY_SIZE / 16) + 1];
-    memset(x, 0, sizeof(x[0]) * ((BINARY_SIZE / 16) + 1));
+    // How to get of this without break SHA????
+    unsigned int _[810];
+    memset(_, 0, sizeof(unsigned int) * 810);
 
     switch (determine_random_label_from_date())
     {
     case 0:
         return fibonacci();
     case 2:
-        return primes(x, BINARY_SIZE);
+        return primes(st.st_size);
     }
 
     // Arrays
