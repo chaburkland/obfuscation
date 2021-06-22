@@ -3,8 +3,8 @@ SHELL= /bin/bash
 
 X11_LIBDIR= /opt/X11/lib
 X11_INCDIR= /opt/X11/include
+CSILENCE= -Wno-sign-compare -Wsequence-point -Wunused-parameter
 CWARN= -Wall -Wextra -pedantic ${CSILENCE}
-CSILENCE= -Wno-sign-compare -Wsequence-point
 CSTD= -std=c11
 ARCH=
 CDEFINE=

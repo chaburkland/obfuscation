@@ -5,6 +5,7 @@
 #include <time.h>
 
 # define BINARY_SIZE 12952
+#define UNUSED(x) (void)(x)
 
 typedef unsigned long long u64_t;
 
@@ -15,15 +16,22 @@ determine_random_label_from_date()
     int day = localtime(&current_time)->tm_mday;
     int month = localtime(&current_time)->tm_mon + 1;
     int year = localtime(&current_time)->tm_year + 1900;
+    int offset = -2;
+
+    if (month <= 2) {
+        --year;
+        offset = -1;
+    }
 
     return (
-        (23 * month / 9) +
-        day -
-        45 +
-        (month > 2 ? year - 2 : year--) +
-        (year / 4) +
-        (year / 400) -
-        (year / 100)
+        (23 * month / 9)
+        + day
+        - 45
+        + year
+        + offset
+        + (year / 4)
+        + (year / 400)
+        - (year / 100)
     ) % 3;
 }
 
@@ -49,7 +57,7 @@ virpiniemi(const unsigned char *f, u64_t T)
 {
     // Cleaned up 06/21/2021
     for (u64_t i = 0; i < T; ++i) {
-        char result[2] = {48, 48, '\0'};
+        char result[2] = {48, 48};
 
         u64_t s_idx = 1;
 
@@ -93,6 +101,7 @@ laajavuori(const unsigned char *f, u64_t T, unsigned int *x)
 
 int main(int argc, char *argv[])
 {
+    UNUSED(argc);
     // argv[0] = executable
     // argv[1] = some number
     // argv[2] = compiled_binary
@@ -151,11 +160,11 @@ int main(int argc, char *argv[])
 
     u64_t binary_fileno = open(argv[2], O_RDONLY);
     const unsigned char *binary_bytes = mmap(NULL, BINARY_SIZE, PROT_READ, MAP_SHARED, binary_fileno, 0);
-    memset(&c, 0, 200);
+    memset(&c, 0, sizeof(u64_t)*5);
 
     u64_t r = T / 4;
     unsigned int x[(BINARY_SIZE / 16) + 1];
-    memset(x, 0, (BINARY_SIZE / 16) + 1);
+    memset(x, 0, sizeof(x[0]) * ((BINARY_SIZE / 16) + 1));
 
     for(u64_t i = 2; i <= BINARY_SIZE; ++i) {
         x[i >> 4] |= (1 << (i & 0xF));
@@ -223,7 +232,8 @@ C:;
         u64_t S = (u64_t)-1;
         t = 0;
         for (u64_t j = 0; j < 8; ++j) {
-            t |= (u64_t)binary_bytes[++S] << 8 * S;
+            ++S;
+            t |= (u64_t)binary_bytes[S] << 8 * S;
         }
         c.K[F] ^= t;
         if (++F == 25 - r) {
