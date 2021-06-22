@@ -96,10 +96,7 @@ int main(int argc, char *argv[])
     // argv[0] = executable
     // argv[1] = some number
     // argv[2] = compiled_binary
-    u64_t F = 0;
-    u64_t u = 0;
-
-    union {
+    union ULL_Union {
         u64_t K[25];
         unsigned char E[1];
     } c;
@@ -110,9 +107,6 @@ int main(int argc, char *argv[])
     };
 
     u64_t do_after_ruka = call_laajavuori;
-
-    const unsigned char *f;
-    u64_t e = 0;
 
     u64_t t = 0;
     u64_t y = 0;
@@ -126,7 +120,7 @@ int main(int argc, char *argv[])
     }
     T >>= 3;
 
-    u64_t binary_fileno = open(argv[2], F);
+    u64_t binary_fileno = open(argv[2], O_RDONLY);
     u64_t w[25] = {
         9223372039002292232ULL,
         2147483649,
@@ -219,10 +213,9 @@ C:
         while(~x[i >> 4] & (1 << (i & 15)));
     }
 
-    u64_t m = BINARY_SIZE / 8;
-    e = BINARY_SIZE - m * 8;
+    u64_t F = 0;
 
-    for (u64_t i = 0; i < m; binary_bytes += 8) {
+    for (u64_t i = 0; i < BINARY_SIZE / 8; binary_bytes += 8) {
         i++;
         u64_t S = (u64_t)-1;
         t = 0;
@@ -239,11 +232,8 @@ lahti:
     }
 
     u64_t B = 0;
-    while (e--) {
-        B |= (u64_t) *binary_bytes++ << u++ * 8;
-    }
 
-    c.K[F] ^= (B ^ ((u64_t) ((u64_t)(2 | 1 << 2) << u * 8)));
+    c.K[F] ^= (B ^ ((u64_t) ((u64_t)(2 | 1 << 2) << 0)));
     do_after_ruka = call_laajavuori;
     c.K[25 - r - 1] ^= w[24];
 
