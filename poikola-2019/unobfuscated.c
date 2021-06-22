@@ -148,7 +148,7 @@ keccakf(u64_t *s, u64_t *w)
         }
 
         for(int i = 0; i < 5; ++i) {
-            t = bc[(i + 4) % 5] ^ (bc[(i + 1) % 5] << 1 | bc[(i + 1) % 5] >> 63);
+            t = bc[(i + 4) % 5] ^ sha3_rotl_64(bc[(i + 1) % 5], 1);
             for(int j = 0; j < 25; j += 5) {
                 s[i + j] ^= t;
             }
