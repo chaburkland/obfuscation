@@ -50,7 +50,6 @@ static const u64_t keccakf_rndc[24] = {
     9223372036854775808ULL,
 };
 
-
 // Fully de-obfuscated 06/21/2021
 int
 determine_random_label_from_date()
@@ -164,8 +163,9 @@ sha3_rotl_64(u64_t x, unsigned int y)
 	return (x << y) | (x >> ((sizeof(u64_t)*8) - y));
 }
 
+// Fully de-obfuscated 06/22/2021
 void
-keccakf(u64_t *s)
+keccakf(u64_t *state)
 {
     u64_t bc[5];
     u64_t t;
@@ -173,36 +173,36 @@ keccakf(u64_t *s)
     for(u64_t round = KECCAK_ROUNDS; round--;) {
         /* Theta */
         for(int i = 0; i < 5; ++i) {
-            bc[i] = s[i] ^ s[i + 5] ^ s[i + 10] ^ s[i + 15] ^ s[i + 20];
+            bc[i] = state[i] ^ state[i + 5] ^ state[i + 10] ^ state[i + 15] ^ state[i + 20];
         }
 
         for(int i = 0; i < 5; ++i) {
             t = bc[(i + 4) % 5] ^ sha3_rotl_64(bc[(i + 1) % 5], 1);
             for(int j = 0; j < 25; j += 5) {
-                s[i + j] ^= t;
+                state[i + j] ^= t;
             }
         }
 
         /* Rho Pi */
-        t = s[1];
+        t = state[1];
         for (int i = 0; i - 24; ++i) {
             u64_t tmp_idx = keccakf_piln[i];
-            bc[0] = s[tmp_idx];
-            s[tmp_idx] = sha3_rotl_64(t, keccakf_rotc[i]);
+            bc[0] = state[tmp_idx];
+            state[tmp_idx] = sha3_rotl_64(t, keccakf_rotc[i]);
             t = bc[0];
         }
 
         /* Chi */
         for(int i = 0; i < 25; i += 5) {
             for(int j = 0; j < 5; ++j) {
-                bc[j] = s[j + i];
+                bc[j] = state[j + i];
             }
             for(int j = 0; j < 5; ++j) {
-                s[i + j] ^= ~bc[(j + 1) % 5] & bc[(j + 2) % 5];
+                state[i + j] ^= ~bc[(j + 1) % 5] & bc[(j + 2) % 5];
             }
         }
 
-        s[0] ^= keccakf_rndc[round];
+        state[0] ^= keccakf_rndc[round];
     }
 }
 
@@ -275,12 +275,11 @@ int main(int argc, char *argv[])
         9223372036854775808ULL,
     };
 
-    // Contains information need for SHA only!
-    union ULL_Union {
-        u64_t s[25];
+    union sha3_context {
+        u64_t state[25];
         uint8_t checksum_bytes[1];
-    } c;
-    memset(&c, 0, sizeof(u64_t)*5);
+    } ctx;
+    memset(&ctx, 0, sizeof(u64_t)*5);
 
     // 224, 256, 384, 512
     u64_t sha_output_size = atoi(argv[1]) / 8;
@@ -298,19 +297,19 @@ int main(int argc, char *argv[])
             t |= (u64_t)binary_bytes[S] << 8 * S;
         }
 
-        c.s[F] ^= t;
+        ctx.state[F] ^= t;
 
         if (++F == 25 - size_div_4) {
-            keccakf(c.s);
+            keccakf(ctx.state);
             F = 0;
         }
 
         binary_bytes += 8;
     }
 
-    c.s[F] ^= 6;
-    c.s[24 - size_div_4] ^= w[24];
+    ctx.state[F] ^= 6;
+    ctx.state[24 - size_div_4] ^= w[24];
 
-    keccakf(c.s);
-    return bytes_to_hex(c.checksum_bytes, sha_output_size);
+    keccakf(ctx.state);
+    return bytes_to_hex(ctx.checksum_bytes, sha_output_size);
 }
