@@ -216,7 +216,14 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    const uint8_t *binary_bytes = mmap(NULL, BINARY_SIZE, PROT_READ, MAP_SHARED, binary_fileno, 0);
+    struct stat st;
+    if(fstat(binary_fileno, &st)) {
+        close(binary_fileno);
+        printf("Cannot determine size of '%s'\n", argv[2]);
+        return 1;
+    }
+
+    const uint8_t *binary_bytes = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, binary_fileno, 0);
     close(binary_fileno);
     if (binary_bytes == NULL) {
         printf("Cannot memory-map '%s'\n", argv[2]);
@@ -229,7 +236,7 @@ int main(int argc, char *argv[])
     u64_t F = 0;
     u64_t t = 0;
 
-    for (u64_t i = 0; i < (BINARY_SIZE / 8); ++i) {
+    for (u64_t i = 0; i < (st.st_size / 8); ++i) {
         u64_t S = (u64_t)-1;
         t = 0;
 
