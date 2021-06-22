@@ -157,6 +157,27 @@ int main(int argc, char *argv[])
     // argv[2] = compiled_binary
     UNUSED(argc);
 
+    // Map binary bytes
+    int binary_fileno = open(argv[2], O_RDONLY);
+    if (binary_fileno == -1) {
+        printf("Cannot open '%s' for reading\n", argv[2]);
+        return 1;
+    }
+
+    struct stat st;
+    if(fstat(binary_fileno, &st)) {
+        close(binary_fileno);
+        printf("Cannot determine size of '%s'\n", argv[2]);
+        return 1;
+    }
+
+    const uint8_t *binary_bytes = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, binary_fileno, 0);
+    close(binary_fileno);
+    if (binary_bytes == NULL) {
+        printf("Cannot memory-map '%s'\n", argv[2]);
+        return 1;
+    }
+
     // 224, 256, 384, 512
     u64_t sha_output_size = atoi(argv[1]) / 8;
 
@@ -208,27 +229,6 @@ int main(int argc, char *argv[])
         u64_t K[25];
         uint8_t checksum_bytes[1];
     } c;
-
-    // Map binary bytes
-    int binary_fileno = open(argv[2], O_RDONLY);
-    if (binary_fileno == -1) {
-        printf("Cannot open '%s' for reading\n", argv[2]);
-        return 1;
-    }
-
-    struct stat st;
-    if(fstat(binary_fileno, &st)) {
-        close(binary_fileno);
-        printf("Cannot determine size of '%s'\n", argv[2]);
-        return 1;
-    }
-
-    const uint8_t *binary_bytes = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, binary_fileno, 0);
-    close(binary_fileno);
-    if (binary_bytes == NULL) {
-        printf("Cannot memory-map '%s'\n", argv[2]);
-        return 1;
-    }
     memset(&c, 0, sizeof(u64_t)*5);
 
     const u64_t size_div_4 = sha_output_size / 4;
