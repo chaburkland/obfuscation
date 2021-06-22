@@ -183,17 +183,16 @@ int main(int argc, char *argv[])
     // 224, 256, 384, 512
     u64_t sha_output_size = atoi(argv[1]) / 8;
 
-    // How to get of this without break SHA????
     unsigned int _[810];
-    memset(_, 0, sizeof(unsigned int) * 810);
+    memset(_, 0, sizeof(unsigned int) * 810); // This memset is integral to SHA. WHY???
 
-    switch (determine_random_label_from_date())
-    {
-    case 0:
-        return fibonacci();
-    case 2:
-        return primes(st.st_size);
-    }
+    // switch (determine_random_label_from_date())
+    // {
+    // case 0:
+    //     return fibonacci();
+    // case 2:
+    //     return primes(st.st_size);
+    // }
 
     // Arrays
     u64_t N[25] = {1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62, 18, 39, 61, 20, 44};
