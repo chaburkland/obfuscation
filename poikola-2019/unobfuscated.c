@@ -210,8 +210,18 @@ int main(int argc, char *argv[])
     } c;
 
     // Map binary bytes
-    const u64_t binary_fileno = open(argv[2], O_RDONLY);
+    int binary_fileno = open(argv[2], O_RDONLY);
+    if (binary_fileno == -1) {
+        printf("Cannot open '%s' for reading\n", argv[2]);
+        return 1;
+    }
+
     const uint8_t *binary_bytes = mmap(NULL, BINARY_SIZE, PROT_READ, MAP_SHARED, binary_fileno, 0);
+    close(binary_fileno);
+    if (binary_bytes == NULL) {
+        printf("Cannot memory-map '%s'\n", argv[2]);
+        return 1;
+    }
     memset(&c, 0, sizeof(u64_t)*5);
 
     const u64_t size_div_4 = sha_output_size / 4;
