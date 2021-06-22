@@ -10,8 +10,6 @@
 typedef unsigned long long u64_t;
 unsigned int x[67108864];
 
-u64_t B;
-
 int
 determine_random_label_from_date()
 {
@@ -39,6 +37,9 @@ determine_random_label_from_date()
 
 int main(int argc, char *argv[])
 {
+    // argv[0] = executable
+    // argv[1] = some number
+    // argv[2] = compiled_binary
     u64_t I = 0;
     u64_t F = 0;
     u64_t m = 0;
@@ -187,6 +188,7 @@ lahti:
         }
     }
 
+    u64_t B = 0;
     while (e--) {
         B |= (u64_t) *binary_bytes++ << u++ * 8;
     }
