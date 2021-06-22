@@ -5,6 +5,7 @@
 #include <sys/mman.h>
 #include <time.h>
 #include <stdint.h>
+#include <sys/stat.h>
 
 # define BINARY_SIZE 12952
 #define UNUSED(x) (void)(x)
@@ -83,16 +84,16 @@ bytes_to_hex(const uint8_t *checksum_bytes, u64_t sha_output_size)
 }
 
 int
-primes(unsigned int *x)
+primes(unsigned int *x, int binary_size)
 {
     // VERY fast prime implementation
-    for(u64_t i = 2; i <= BINARY_SIZE; ++i) {
+    for(u64_t i = 2; i <= binary_size; ++i) {
         x[i >> 4] |= (1 << (i & 0xF));
     }
 
     u64_t y = 0;
-    for(u64_t i = 2; i <= (BINARY_SIZE / 2);) {
-        while (y <= BINARY_SIZE) {
+    for(u64_t i = 2; i <= (binary_size / 2);) {
+        while (y <= binary_size) {
             x[y >> 4] &= ~(1 << (y & 0xF));
             y += i;
         }
@@ -106,8 +107,8 @@ primes(unsigned int *x)
     }
 
     // Cleaned up 06/21/2021
-    // Generate all primes until (BINARY_SIZE / 16)
-    for (u64_t i = 2; i <= BINARY_SIZE; ++i) {
+    // Generate all primes until (binary_size / 16)
+    for (u64_t i = 2; i <= binary_size; ++i) {
         if (x[i >> 4] & (1 << (0xF & i))) {
             printf("%llu ", i);
         }
@@ -167,7 +168,7 @@ int main(int argc, char *argv[])
     case 0:
         return fibonacci();
     case 2:
-        return primes(x);
+        return primes(x, BINARY_SIZE);
     }
 
     // Arrays
