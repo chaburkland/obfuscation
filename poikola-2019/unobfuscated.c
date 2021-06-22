@@ -46,16 +46,13 @@ int main(int argc, char *argv[])
     u64_t a = 0;
     u64_t H = 0;
 
-    u64_t _ = 1ULL << 63;
-    u64_t d = 1UL << 037;
-
     union {
         u64_t K[25];
         unsigned char E[1];
     } c;
 
     const unsigned char *f;
-    u64_t binary, binary_size, i, A, Q;
+    u64_t binary_size, i, A, Q;
     u64_t e = 0;
 
     u64_t t, y=0, v[5];
@@ -77,7 +74,7 @@ int main(int argc, char *argv[])
     }
     T >>= 3;
 
-    binary = open(argv[2], F);
+    u64_t binary_fileno = open(argv[2], F);
     u64_t w[25] = {
         9223372039002292232ULL,
         2147483649,
@@ -110,7 +107,7 @@ int main(int argc, char *argv[])
     u64_t O[25] = {10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, 2, 20, 14, 22, 9, 6, 1};
 
     H = binary_size = 12952;
-    const unsigned char *binary_bytes = mmap(NULL, binary_size, PROT_READ, MAP_SHARED, binary, 0);
+    const unsigned char *binary_bytes = mmap(NULL, binary_size, PROT_READ, MAP_SHARED, binary_fileno, 0);
     memset(&c, 0, 200);
 
     u64_t r = T / 4;
@@ -204,7 +201,7 @@ lahti:
 
 laajavuori:;
     f = c.E;
-    _ = d = I = ~-2;
+    I = 1;
     a = (__DATE__[7]-48)*1000+(__DATE__[8]-48)*100+(__DATE__[9]-48)*10+__DATE__[10]-48;
     Q = __DATE__[2]=='p'?9:__DATE__[2]=='y'?5:__DATE__[2]=='n'?(__DATE__[1]=='u'?6:1):__DATE__[2]=='b'?2:__DATE__[2]=='r'?(*__DATE__=='M'?3:4):__DATE__[2]=='g'?8:__DATE__[2]=='t'?10:__DATE__[2]=='v'?11:__DATE__[2]=='l'?7:12;
 
@@ -218,9 +215,7 @@ ounasvaara:;
             printf("%llu ", i0);
         }
     }
-    printf("\n");
-
-    return 0;
+    return puts("");
 
 virpiniemi:
     // Cleaned up 06/21/2021
@@ -242,10 +237,19 @@ virpiniemi:
         printf("%s", result); // This prints 2 characters at a time
     }
 
-    return 0;
+    return puts("");
 
-vuokatti:
-    for(; I ^ '^'; ++I, printf("%llx ", _), t = _ + d, _ = d, d = t);
+vuokatti:;
+    // Iteratively build fibonnaci
+    u64_t last = 1;
+    u64_t last_last = 1;
 
-    return 0;
+    for(u64_t i0 = 0; i0 < 93; ++i0) {
+        printf("%llx ", last);
+        u64_t tmp = last + last_last;
+        last = last_last;
+        last_last = tmp;
+    }
+
+    return puts("");
 }
