@@ -4,9 +4,6 @@
 #include <sys/mman.h>
 #include <time.h>
 
-#define SPACE ' '
-#define ZERO '0'
-
 typedef unsigned long long u64_t;
 
 int
@@ -35,10 +32,8 @@ int main(int argc, char *argv[])
     // argv[2] = compiled_binary
     u64_t I = 0;
     u64_t F = 0;
-    u64_t m = 0;
     u64_t u = 0;
     u64_t a = 0;
-    u64_t H = 0;
 
     union {
         u64_t K[25];
@@ -53,10 +48,11 @@ int main(int argc, char *argv[])
     u64_t goto_after_ruka = laajavuori_label;
 
     const unsigned char *f;
-    u64_t binary_size, i, A;
     u64_t e = 0;
 
-    u64_t t, y=0, v[5];
+    u64_t t = 0;
+    u64_t y = 0;
+    u64_t v[5];
 
     u64_t N[25] = {1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62, 18, 39, 61, 20, 44};
 
@@ -95,10 +91,10 @@ int main(int argc, char *argv[])
         9223372036854775808ULL,
     };
 
-    i = 0;
+    u64_t i = 0;
     u64_t O[25] = {10, 7, 11, 17, 18, 3, 5, 16, 8, 21, 24, 4, 15, 23, 19, 13, 12, 2, 20, 14, 22, 9, 6, 1};
 
-    H = binary_size = 12952;
+    u64_t binary_size = 12952;
     const unsigned char *binary_bytes = mmap(NULL, binary_size, PROT_READ, MAP_SHARED, binary_fileno, 0);
     memset(&c, 0, 200);
 
@@ -118,21 +114,24 @@ ruka:
         }
         for(a=0;a<5;a++) {
             t = v[(a + 4) % 5] ^ (v[(a + 1) % 5] << 1 | v[(a + 1) % 5] >> '?');
-            for(A = 0; A < 25; A +=5) {
-                c.K[a + A] ^= t;
+            for(u64_t i2 = 0; i2 < 25; i2 += 5) {
+                c.K[a + i2] ^= t;
             }
         }
         t = c.K[1];
         for (a = 0; a - 24; a++) {
-            A = O[a], *v = c.K[A], c.K[A] = t << N[a] | t >> (0100 - N[a]), t = *v;
+            u64_t tmp_idx = O[a];
+            *v = c.K[tmp_idx];
+            c.K[tmp_idx] = t << N[a] | t >> (0100 - N[a]);
+            t = *v;
         }
 
-        for(A =! 25; A ^ 25; A += 5) {
+        for(u64_t i1 = 0; i1 < 25; i1 += 5) {
             for(a=0;a<5;a++) {
-                v[a] = c.K[a + A];
+                v[a] = c.K[a + i1];
             }
             for(a=0;a<5;a++) {
-                c.K[a + A] ^= ~v[(a + 1) % 5] & v[(a + 2) % 5];
+                c.K[a + i1] ^= ~v[(a + 1) % 5] & v[(a + 2) % 5];
             }
         }
 
@@ -164,11 +163,11 @@ C:
     if (0) {
 
 puijo:
-        F = !25;
+        F = 0;
     }
 
-    m = H / 8;
-    e = H - m * 8;
+    u64_t m = binary_size / 8;
+    e = binary_size - m * 8;
 
     for (; i < m; binary_bytes += 8) {
         i++;
