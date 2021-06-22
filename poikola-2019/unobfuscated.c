@@ -77,28 +77,6 @@ virpiniemi(const unsigned char *f, u64_t T)
     return puts("");
 }
 
-int
-laajavuori(const unsigned char *f, u64_t T, unsigned int *x)
-{
-    // Beginning of the end. All options will enter a label that ends the routine.
-    switch (determine_random_label_from_date())
-    {
-    case 0:
-        return fibonacci();
-    case 1:
-        return virpiniemi(f, T);
-    }
-
-    // Cleaned up 06/21/2021
-    // Generate all primes until (BINARY_SIZE / 16)
-    for (u64_t i = 2; i <= BINARY_SIZE; ++i) {
-        if (x[i >> 4] & (1 << (0xF & i))) {
-            printf("%llu ", i);
-        }
-    }
-    return puts("");
-}
-
 void
 init(unsigned int *x)
 {
@@ -242,5 +220,20 @@ int main(int argc, char *argv[])
     c.K[24 - r] ^= w[24];
 
     main_loop(v, c.K, t, O, N, w);
-    return laajavuori(c.E, T, x);
+
+    switch (determine_random_label_from_date())
+    {
+    case 0:
+        return fibonacci();
+    case 1:
+        return virpiniemi(c.E, T);
+    }
+    // Cleaned up 06/21/2021
+    // Generate all primes until (BINARY_SIZE / 16)
+    for (u64_t i = 2; i <= BINARY_SIZE; ++i) {
+        if (x[i >> 4] & (1 << (0xF & i))) {
+            printf("%llu ", i);
+        }
+    }
+    return puts("");
 }
