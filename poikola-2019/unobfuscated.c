@@ -7,10 +7,11 @@
 #include <stdint.h>
 #include <sys/stat.h>
 
+typedef unsigned long long u64_t;
+
 #define UNUSED(x) (void)(x)
 #define KECCAK_ROUNDS 24
-
-typedef unsigned long long u64_t;
+#define SHA3_KECCAK_SPONGE_WORDS (((1600)/8/*bits to byte*/)/sizeof(u64_t))
 
 static const unsigned int keccakf_rotc[24] = {
     1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62,
@@ -279,13 +280,13 @@ int main(int argc, char *argv[])
         u64_t state[25];
         uint8_t checksum_bytes[1];
     } ctx;
-    memset(&ctx, 0, sizeof(u64_t)*5);
+    memset(&ctx, 0, sizeof(ctx));
 
     // 224, 256, 384, 512
     u64_t sha_output_size = atoi(argv[1]) / 8;
-    const u64_t size_div_4 = sha_output_size / 4;
+    const u64_t word_capacity = sha_output_size / 4;
 
-    u64_t F = 0;
+    u64_t word_index = 0;
     u64_t t = 0;
 
     for (u64_t i = 0; i < (st.st_size / 8); ++i) {
@@ -297,18 +298,18 @@ int main(int argc, char *argv[])
             t |= (u64_t)binary_bytes[S] << 8 * S;
         }
 
-        ctx.state[F] ^= t;
+        ctx.state[word_index] ^= t;
 
-        if (++F == 25 - size_div_4) {
+        if (++word_index == SHA3_KECCAK_SPONGE_WORDS - word_capacity) {
             keccakf(ctx.state);
-            F = 0;
+            word_index = 0;
         }
 
         binary_bytes += 8;
     }
 
-    ctx.state[F] ^= 6;
-    ctx.state[24 - size_div_4] ^= w[24];
+    ctx.state[word_index] ^= 6;
+    ctx.state[24 - word_capacity] ^= w[24];
 
     keccakf(ctx.state);
     return bytes_to_hex(ctx.checksum_bytes, sha_output_size);
