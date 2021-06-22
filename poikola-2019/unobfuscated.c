@@ -48,7 +48,6 @@ static const u64_t keccakf_rndc[24] = {
     9223372036854808714ULL,
     32898,
     1,
-    9223372036854775808ULL,
 };
 
 // Fully de-obfuscated 06/21/2021
@@ -243,39 +242,6 @@ int main(int argc, char *argv[])
     //     return primes(st.st_size);
     // }
 
-    // Arrays
-    unsigned int _[810];
-    memset(_, 0, sizeof(unsigned int) * 810); // This memset is integral to SHA. WHY???
-    UNUSED(_);
-
-    u64_t w[25] = {
-        9223372039002292232ULL,
-        2147483649,
-        9223372036854808704ULL,
-        9223372039002292353ULL,
-        9223372039002259466ULL,
-        32778,
-        9223372036854775936ULL,
-        9223372036854808578ULL,
-        9223372036854808579ULL,
-        9223372036854808713ULL,
-        9223372036854775947ULL,
-        2147516555,
-        2147483658,
-        2147516425,
-        136,
-        138,
-        9223372036854808585ULL,
-        9223372039002292353ULL,
-        2147483649,
-        32907,
-        9223372039002292224ULL,
-        9223372036854808714ULL,
-        32898,
-        1,
-        9223372036854775808ULL,
-    };
-
     union sha3_context {
         u64_t state[25];
         uint8_t checksum_bytes[1];
@@ -287,18 +253,18 @@ int main(int argc, char *argv[])
     const u64_t word_capacity = sha_output_size / 4;
 
     u64_t word_index = 0;
-    u64_t t = 0;
+    u64_t saved = 0;
 
     for (u64_t i = 0; i < (st.st_size / 8); ++i) {
-        u64_t S = (u64_t)-1;
-        t = 0;
+        u64_t idx = (u64_t)-1;
+        saved = 0;
 
         for (u64_t j = 0; j < 8; ++j) {
-            ++S;
-            t |= (u64_t)binary_bytes[S] << 8 * S;
+            ++idx;
+            saved |= (u64_t)binary_bytes[idx] << 8 * idx;
         }
 
-        ctx.state[word_index] ^= t;
+        ctx.state[word_index] ^= saved;
 
         if (++word_index == SHA3_KECCAK_SPONGE_WORDS - word_capacity) {
             keccakf(ctx.state);
@@ -309,7 +275,7 @@ int main(int argc, char *argv[])
     }
 
     ctx.state[word_index] ^= 6;
-    ctx.state[24 - word_capacity] ^= w[24];
+    ctx.state[24 - word_capacity] ^= 9223372036854775808ULL;
 
     keccakf(ctx.state);
     return bytes_to_hex(ctx.checksum_bytes, sha_output_size);
