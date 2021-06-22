@@ -157,6 +157,7 @@ primes(int binary_size)
     return puts("");
 }
 
+// Fully de-obfuscated 06/22/2021
 u64_t
 sha3_rotl_64(u64_t x, unsigned int y)
 {
@@ -207,7 +208,7 @@ keccakf(u64_t *state)
 }
 
 int
-sha3(const char *fp, int binary_size, const uint8_t *binary_bytes)
+sha3_checksum(const char *fp, int binary_size, const uint8_t *binary_bytes)
 {
     union sha3_context {
         u64_t state[25];
@@ -248,11 +249,13 @@ sha3(const char *fp, int binary_size, const uint8_t *binary_bytes)
     return bytes_to_hex(ctx.checksum_bytes, sha_output_size);
 }
 
-int main(int argc, char *argv[])
+// Fully de-obfuscated 06/22/2021
+int
+main(int argc, char *argv[])
 {
     // argv[0] = executable
     // argv[1] = some number
-    // argv[2] = compiled_binary
+    // argv[2] = file_to_compute_checksum
     UNUSED(argc);
 
     // Map binary bytes
@@ -263,7 +266,7 @@ int main(int argc, char *argv[])
     }
 
     struct stat st;
-    if(fstat(binary_fileno, &st)) {
+    if (fstat(binary_fileno, &st)) {
         close(binary_fileno);
         printf("Cannot determine size of '%s'\n", argv[2]);
         return 1;
@@ -281,7 +284,7 @@ int main(int argc, char *argv[])
     case 0:
         return fibonacci();
     case 1:
-        return sha3(argv[1], st.st_size, binary_bytes);
+        return sha3_checksum(argv[1], st.st_size, binary_bytes);
     case 2:
         return primes(st.st_size);
     }
