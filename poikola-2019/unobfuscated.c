@@ -6,12 +6,11 @@
 #include <time.h>
 #include <stdint.h>
 #include <sys/stat.h>
-
-typedef unsigned long long u64_t;
+#include <unistd.h>
 
 #define UNUSED(x) (void)(x)
 #define KECCAK_ROUNDS 24
-#define SHA3_KECCAK_SPONGE_WORDS (((1600)/8/*bits to byte*/)/sizeof(u64_t))
+#define SHA3_KECCAK_SPONGE_WORDS (((1600)/8/*bits to byte*/)/sizeof(uint64_t))
 
 static const unsigned int keccakf_rotc[24] = {
     1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 2, 14, 27, 41, 56, 8, 25, 43, 62,
@@ -23,7 +22,7 @@ static const unsigned int keccakf_piln[24] = {
     14, 22, 9, 6, 1
 };
 
-static const u64_t keccakf_rndc[24] = {
+static const uint64_t keccakf_rndc[24] = {
     9223372039002292232ULL,
     2147483649,
     9223372036854808704ULL,
@@ -50,7 +49,6 @@ static const u64_t keccakf_rndc[24] = {
     1,
 };
 
-// Fully de-obfuscated 06/21/2021
 int
 determine_program_output_from_date()
 {
@@ -77,17 +75,16 @@ determine_program_output_from_date()
     );
 }
 
-// Fully de-obfuscated 06/21/2021
 int
 fibonacci()
 {
     // Iteratively build fibonnaci
-    u64_t last = 1;
-    u64_t last_last = 1;
+    uint64_t last = 1;
+    uint64_t last_last = 1;
 
-    for(u64_t i = 0; i < 93; ++i) {
-        printf("%llx ", last);
-        u64_t tmp = last + last_last;
+    for(uint64_t i = 0; i < 93; ++i) {
+        printf("%lu ", last);
+        uint64_t tmp = last + last_last;
         last = last_last;
         last_last = tmp;
     }
@@ -95,17 +92,16 @@ fibonacci()
     return puts("");
 }
 
-// Fully de-obfuscated 06/22/2021
 int
-bytes_to_hex(const uint8_t *checksum_bytes, u64_t sha_output_size)
+bytes_to_hex(const uint8_t *checksum_bytes, uint64_t sha_output_size)
 {
-    for (u64_t i = 0; i < sha_output_size; ++i) {
+    for (uint64_t i = 0; i < sha_output_size; ++i) {
         uint8_t result[2] = "00";
         uint8_t byte = checksum_bytes[i];
         size_t idx = 1;
 
         while (byte) {
-            u64_t half_byte = byte & 0xF;
+            uint64_t half_byte = byte & 0xF;
 
             if(half_byte < 10) {
                 result[idx] = '0' + half_byte;
@@ -127,12 +123,12 @@ primes(int binary_size)
     // VERY fast prime implementation
     unsigned int *x = calloc((binary_size / 16) + 1, sizeof(unsigned int));
 
-    for(u64_t i = 2; i <= binary_size; ++i) {
+    for(uint64_t i = 2; i <= binary_size; ++i) {
         x[i >> 4] |= (1 << (i & 0xF));
     }
 
-    u64_t y = 0;
-    for(u64_t i = 2; i <= (binary_size / 2);) {
+    uint64_t y = 0;
+    for(uint64_t i = 2; i <= (binary_size / 2);) {
         while (y <= binary_size) {
             x[y >> 4] &= ~(1 << (y & 0xF));
             y += i;
@@ -146,32 +142,29 @@ primes(int binary_size)
         y = i * 2;
     }
 
-    // Cleaned up 06/21/2021
     // Generate all primes until (binary_size / 16)
-    for (u64_t i = 2; i <= binary_size; ++i) {
+    for (uint64_t i = 2; i <= binary_size; ++i) {
         if (x[i >> 4] & (1 << (0xF & i))) {
-            printf("%llu ", i);
+            printf("%lu ", i);
         }
     }
     free(x);
     return puts("");
 }
 
-// Fully de-obfuscated 06/22/2021
-u64_t
-sha3_rotl_64(u64_t x, unsigned int y)
+uint64_t
+sha3_rotl_64(uint64_t x, unsigned int y)
 {
-	return (x << y) | (x >> ((sizeof(u64_t)*8) - y));
+	return (x << y) | (x >> ((sizeof(uint64_t)*8) - y));
 }
 
-// Fully de-obfuscated 06/22/2021
 void
-keccakf(u64_t *state)
+keccakf(uint64_t *state)
 {
-    u64_t bc[5];
-    u64_t t;
+    uint64_t bc[5];
+    uint64_t t;
 
-    for(u64_t round = KECCAK_ROUNDS; round--;) {
+    for(uint64_t round = KECCAK_ROUNDS; round--;) {
         /* Theta */
         for(int i = 0; i < 5; ++i) {
             bc[i] = state[i] ^ state[i + 5] ^ state[i + 10] ^ state[i + 15] ^ state[i + 20];
@@ -187,7 +180,7 @@ keccakf(u64_t *state)
         /* Rho Pi */
         t = state[1];
         for (int i = 0; i - 24; ++i) {
-            u64_t tmp_idx = keccakf_piln[i];
+            uint64_t tmp_idx = keccakf_piln[i];
             bc[0] = state[tmp_idx];
             state[tmp_idx] = sha3_rotl_64(t, keccakf_rotc[i]);
             t = bc[0];
@@ -207,29 +200,30 @@ keccakf(u64_t *state)
     }
 }
 
+// Not fully deobfuscated yet
 int
 sha3_checksum(const char *fp, int binary_size, const uint8_t *binary_bytes)
 {
     union sha3_context {
-        u64_t state[25];
+        uint64_t state[25];
         uint8_t checksum_bytes[1];
     } ctx;
     memset(&ctx, 0, sizeof(ctx));
 
     // 224, 256, 384, 512
-    u64_t sha_output_size = atoi(fp) / 8;
-    const u64_t word_capacity = sha_output_size / 4;
+    int sha_output_size = atoi(fp) / 8;
+    const uint64_t word_capacity = sha_output_size / 4;
 
-    u64_t word_index = 0;
-    u64_t saved = 0;
+    int word_index = 0;
+    uint64_t saved = 0;
 
-    for (u64_t i = 0; i < (binary_size / 8); ++i) {
-        u64_t idx = (u64_t)-1;
+    for (uint64_t i = 0; i < (binary_size / 8); ++i) {
+        uint64_t idx = (uint64_t)-1;
         saved = 0;
 
-        for (u64_t j = 0; j < 8; ++j) {
+        for (uint64_t j = 0; j < 8; ++j) {
             ++idx;
-            saved |= (u64_t)binary_bytes[idx] << 8 * idx;
+            saved |= (uint64_t)binary_bytes[idx] << 8 * idx;
         }
 
         ctx.state[word_index] ^= saved;
@@ -249,7 +243,6 @@ sha3_checksum(const char *fp, int binary_size, const uint8_t *binary_bytes)
     return bytes_to_hex(ctx.checksum_bytes, sha_output_size);
 }
 
-// Fully de-obfuscated 06/22/2021
 int
 main(int argc, char *argv[])
 {
