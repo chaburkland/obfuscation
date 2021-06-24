@@ -3,6 +3,7 @@ import os
 import sys
 from pathlib import Path
 from contextlib import contextmanager
+from tqdm import tqdm
 
 @contextmanager
 def cwd(newdir):
@@ -15,7 +16,7 @@ def cwd(newdir):
 
 subdir = Path(os.getcwd()) / "modified"
 
-def execute(subdir):
+def execute(subdir, hash_size):
     with cwd(subdir):
         try:
             os.remove("prog")
@@ -30,9 +31,11 @@ def execute(subdir):
             print(subdir, "::", post.stderr.decode())
             sys.exit(1)
 
-        post = subprocess.run("./prog 512 ../compiled_binary".split(), capture_output=True)
+        post = subprocess.run(f"./prog {hash_size * 8} ../compiled_binary".split(), capture_output=True)
         return post.stdout.decode().strip()
 
-original = execute("original")
-modified = execute("modified")
-assert modified == original, f"\n{modified=}\n{original=}"
+
+for hash_size in tqdm(range(4, 100)):
+    original = execute("original", hash_size)
+    modified = execute("modified", hash_size)
+    assert modified == original, f"\n{modified=}\n{original=}"
